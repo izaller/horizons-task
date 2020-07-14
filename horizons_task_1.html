@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Horizons Task</title>
+    <script src="jspsych-6.1.0/jspsych.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-horizons-task.js"></script>
+    <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+  </head>
+  <body></body>
+  <script>
+      /* bandit setup */
+
+  </script>
+  <script>
+    /* create timeline */
+    var timeline = [];
+
+    /* define welcome message trial */
+    var welcome = {
+    type: "html-keyboard-response",
+    stimulus: "Welcome to the experiment. Press any key to begin."
+    };
+    timeline.push(welcome);
+
+    // /* define instructions trial */
+    // var instructions = {
+    //   type: "html-keyboard-response",
+    //   stimulus: "<p>In this experiment, you will be able to choose between two " +
+    //       " different slot machines (bandits) with different average payouts of points.</p>" +
+    //       "<p>Your goal is to earn the maximum number of points.</p>" +
+    //       "<p>To choose the left bandit, " +
+    //       "press the <strong>left</strong> arrow key.</p>" +
+    //       "<p>To choose the right bandit, " +
+    //       "press the <strong>right</strong> arrow key.</p>" +
+    //       "<p>Games will be either 5 or 10 rounds. For the first four rounds of each game," + 
+    //       "you will only have one choice for your bandit. Starting with the 5th round, " + 
+    //       "you will be able to make your own choice of bandit. </p>" +
+    //       "<p>Press any key to begin.</p>",
+    //   post_trial_gap: 1000
+    // };
+    // timeline.push(instructions);
+
+    // timeline variables
+
+    var tforced_choices = [
+        // 3 left, 1 right
+        {forced: ['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow'] },
+        {forced: ['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow'] },
+        {forced: ['leftarrow', 'rightarrow', 'leftarrow', 'leftarrow'] },
+        {forced: ['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow'] },
+        // 2 left, 2 right
+        {forced: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow'] },
+        {forced: ['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow'] },
+        {forced: ['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow'] },
+        {forced: ['rightarrow', 'leftarrow', 'rightarrow', 'leftarrow'] },
+        {forced: ['rightarrow', 'rightarrow', 'leftarrow', 'leftarrow'] },
+        {forced: ['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow'] },
+        // 1 left, 3 right
+        {forced: ['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow'] },
+        {forced: ['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow'] },
+        {forced: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow'] },
+        {forced: ['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow'] },
+        // 3 and 1 (again)
+        {forced: ['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow'] },
+        {forced: ['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow'] }
+    ]
+
+    // var game = {
+    //     type: "horizons-task",
+    //     horizon: function(){
+    //         return jsPsych.timelineVariable("horizon");
+    //     },
+    //     colors: function(){
+    //         return jsPsych.timelineVariable("colors");
+    //     },
+    //     means: function(){
+    //         return jsPsych.timelineVariable("means");
+    //     },
+    //     forced_choices: function(){
+    //         return jsPsych.timelineVariable("forced_choices");
+    //     },
+    // }
+    var games = []
+    function generate_games(){
+
+        var forced_choices_two_two = [] // choices for a [2,2] game
+        for (var i = 0; i < 3; i++) {
+            forced_choices_two_two.push(['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
+            forced_choices_two_two.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+            forced_choices_two_two.push(['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
+            forced_choices_two_two.push(['rightarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
+            forced_choices_two_two.push(['rightarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
+            forced_choices_two_two.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
+        }
+        forced_choices_two_two.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+        forced_choices_two_two.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
+
+        var forced_choices_three_one = [] // choices for a [3,1] and [1,3] game
+        for (var i = 0; i < 2; i++) {
+            forced_choices_three_one.push(['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
+            forced_choices_three_one.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
+            forced_choices_three_one.push(['leftarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
+            forced_choices_three_one.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
+            forced_choices_three_one.push(['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
+            forced_choices_three_one.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+            forced_choices_three_one.push(['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
+            forced_choices_three_one.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
+        }
+        forced_choices_three_one.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
+        forced_choices_three_one.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
+        forced_choices_three_one.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+        forced_choices_three_one.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
+
+        var colors = [];
+        for (var i = 0; i < 10; i++) {
+            colors.push(["orange", "lightblue"]);
+            colors.push(["lightblue", "orange"]);
+        }
+
+        var means = [
+            [40, 10], [40, 20], [40, 28], [40, 32], [40, 36],
+            [40, 44], [40, 48], [40, 52], [40, 60], [40, 70],
+            [60, 30], [60, 40], [60, 48], [60, 52], [60, 56],
+            [60, 64], [60, 68], [60, 72], [60, 80], [60, 90]
+        ]
+
+        for (var i = 0; i < 20; i++) {
+            game_h1_two_two = {
+                type: "horizons-task",
+                horizon: 5,
+                colors: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
+                },
+                means: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(means, 1)[0];
+                },
+                forced_choices: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_two_two, 1)[0];
+                }
+            }
+
+            game_h6_two_two = {
+                type: "horizons-task",
+                horizon: 10,
+                colors: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
+                },
+                means: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(means, 1)[0];
+                },
+                forced_choices: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_two_two, 1)[0];
+                }
+            }
+
+            game_h1_three_one = {
+                type: "horizons-task",
+                horizon: 5,
+                colors: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
+                },
+                means: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(means, 1)[0];
+                },
+                forced_choices: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_three_one, 1)[0];
+                }
+            }
+
+            game_h6_three_one = {
+                type: "horizons-task",
+                horizon: 10,
+                colors: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
+                },
+                means: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(means, 1)[0];
+                },
+                forced_choices: function(){
+                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_three_one, 1)[0];
+                }
+            }
+
+            games.push(game_h1_two_two);
+            games.push(game_h6_two_two);
+            games.push(game_h1_three_one);
+            games.push(game_h6_three_one);
+        }
+    }
+
+    generate_games();
+    games = jsPsych.randomization.shuffle(games);
+    
+    for (var i = 0; i < 80; i++){
+        timeline.push(games[i])
+    }
+    //var three_one = generate_three_one()
+
+    /* start the experiment */
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    });
+
+  </script>
+</html>
