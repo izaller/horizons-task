@@ -140,7 +140,7 @@ jsPsych.plugins["horizons-task"] = (function() {
 
         var left_x = centerX - 4 * w / 3; // x coordinate of top left corner of top box of left bandit
         var right_x = centerX; // x coordinate of top left corner of top box of right bandit
-        var bandit_Y_initial = 0.10 * canvasHeight; // y coordinate of top left corner of both bandits
+        var bandit_Y_initial = 0.05 * canvasHeight; // y coordinate of top left corner of both bandits
 
         //--------Set up Canvas end-------
         
@@ -439,3 +439,5 @@ jsPsych.plugins["horizons-task"] = (function() {
 	//Return the plugin object which contains the trial
 	return plugin;
 })();
+
+  
