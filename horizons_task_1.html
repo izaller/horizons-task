@@ -9,10 +9,6 @@
   </head>
   <body></body>
   <script>
-      /* bandit setup */
-
-  </script>
-  <script>
     /* create timeline */
     var timeline = [];
 
@@ -23,65 +19,62 @@
     };
     timeline.push(welcome);
 
-    // /* define instructions trial */
-    // var instructions = {
-    //   type: "html-keyboard-response",
-    //   stimulus: "<p>In this experiment, you will be able to choose between two " +
-    //       " different slot machines (bandits) with different average payouts of points.</p>" +
-    //       "<p>Your goal is to earn the maximum number of points.</p>" +
-    //       "<p>To choose the left bandit, " +
-    //       "press the <strong>left</strong> arrow key.</p>" +
-    //       "<p>To choose the right bandit, " +
-    //       "press the <strong>right</strong> arrow key.</p>" +
-    //       "<p>Games will be either 5 or 10 rounds. For the first four rounds of each game," + 
-    //       "you will only have one choice for your bandit. Starting with the 5th round, " + 
-    //       "you will be able to make your own choice of bandit. </p>" +
-    //       "<p>Press any key to begin.</p>",
-    //   post_trial_gap: 1000
-    // };
-    // timeline.push(instructions);
+    /* define instructions trials */
+    var instructions_1 = {
+      type: "html-keyboard-response",
+      stimulus: "<p>In this experiment, you will be able to choose between two " +
+          " different slot machines (bandits) with different average payouts of points. </p>" +
+          "Your goal is to earn the maximum number of points." +
+          "<p>To choose the left bandit, press the <strong>left</strong> arrow key. To choose the right bandit, " +
+          "press the <strong>right</strong> arrow key.</p>",
+    };
+    timeline.push(instructions_1);
 
-    // timeline variables
+    var instructions_2 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Games will be either 5 or 10 rounds. For the first <strong>four</strong> rounds of each game, " + 
+          "you will be told to select either the right or left option. This will be indicated by a green square in the appropriate box. " + 
+          "<p>If a green square appears in the left bandit, you must press the left arrow to reveal that payout and continue. " + 
+          "If a green square appears in the right bandit, you must press the right arrow to reveal that payout and continue.</p>" + 
+          "Starting with the <strong>fifth</strong> round, you will be able to make your own choices. This will be indicated by green square in both the left and right bandits. </p>" + 
+          "<p>When you finish a game, you can press any key to continue to the next one.</p>" +
+          "<p>Press any key to continue to the demonstration.</p>",
+    };
+    timeline.push(instructions_2);
 
-    var tforced_choices = [
-        // 3 left, 1 right
-        {forced: ['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow'] },
-        {forced: ['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow'] },
-        {forced: ['leftarrow', 'rightarrow', 'leftarrow', 'leftarrow'] },
-        {forced: ['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow'] },
-        // 2 left, 2 right
-        {forced: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow'] },
-        {forced: ['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow'] },
-        {forced: ['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow'] },
-        {forced: ['rightarrow', 'leftarrow', 'rightarrow', 'leftarrow'] },
-        {forced: ['rightarrow', 'rightarrow', 'leftarrow', 'leftarrow'] },
-        {forced: ['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow'] },
-        // 1 left, 3 right
-        {forced: ['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow'] },
-        {forced: ['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow'] },
-        {forced: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow'] },
-        {forced: ['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow'] },
-        // 3 and 1 (again)
-        {forced: ['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow'] },
-        {forced: ['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow'] }
-    ]
+    var demo_instructions = {
+        type: "html-keyboard-response",
+        stimulus: "For this demonstration, you will be asked to complete two games to ensure you understand the instructions." + 
+            "<p>Press any key to proceed.</p>",
+    }
+    timeline.push(demo_instructions)
 
-    // var game = {
-    //     type: "horizons-task",
-    //     horizon: function(){
-    //         return jsPsych.timelineVariable("horizon");
-    //     },
-    //     colors: function(){
-    //         return jsPsych.timelineVariable("colors");
-    //     },
-    //     means: function(){
-    //         return jsPsych.timelineVariable("means");
-    //     },
-    //     forced_choices: function(){
-    //         return jsPsych.timelineVariable("forced_choices");
-    //     },
-    // }
+    var demo_game1 = {
+        type: "horizons-task",
+        horizon: 5,
+        colors: ["lightblue", "orange"],
+        means: [40, 70],
+        forced_choices: ['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow']
+    }
+    timeline.push(demo_game1)
+
+    var demo_game2 = {
+        type: "horizons-task",
+        horizon: 10,
+        colors: ["orange", "lightblue"],
+        means: [60, 48],
+        forced_choices: ['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']
+    }
+    timeline.push(demo_game2)
+
+    var instructions_3 = {
+        type: "html-keyboard-response",
+        stimulus: "Great job! You are now ready to begin the experiment." + "<p>Press any key to continue to the task</p>",
+    };
+    timeline.push(instructions_3);
+
     var games = []
+
     function generate_games(){
 
         var forced_choices_two_two = [] // choices for a [2,2] game
@@ -195,7 +188,6 @@
     for (var i = 0; i < 80; i++){
         timeline.push(games[i])
     }
-    //var three_one = generate_three_one()
 
     /* start the experiment */
     jsPsych.init({
