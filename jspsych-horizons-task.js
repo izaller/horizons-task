@@ -24,7 +24,7 @@ jsPsych.plugins["horizons-task"] = (function() {
             default: undefined,
             description: "The preselected first four choices (left vs right)"
         },
-        // response_ends_trial: {
+        // response_ends_trial: { ****TODO: implement*****
         //     type: jsPsych.plugins.parameterType.BOOL,
         //     pretty_name: "Response ends trial",
         //     default: true,
@@ -222,16 +222,6 @@ jsPsych.plugins["horizons-task"] = (function() {
             //Restore the settings to JsPsych defaults
 			body.style.margin = originalMargin;
             body.style.padding = originalPadding;
-            //body.style.border = orignalBorder;
-            
-            // // end of game message, press any key to continue
-			// keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
-            //     callback_function: last_response, //Function to call once the subject presses a valid key
-			// 	valid_responses: jsPsych.ALL_KEYS, //The keys that will be considered a valid response and cause the callback function to be called
-            //     rt_method: 'performance', //The type of method to record timing information. 
-            //     persist: false, //If set to false, keyboard listener will only trigger the first time a valid key is pressed. If set to true, it has to be explicitly cancelled by the cancelKeyboardResponse plugin API.
-			// 	allow_held_key: false //Only register the key once, after this getKeyboardResponse function is called. (Check JsPsych docs for better info under 'jsPsych.pluginAPI.getKeyboardResponse').
-            // });
 
             //End this trial and move on to the next trial
 			jsPsych.finishTrial(trial_data);
@@ -449,5 +439,3 @@ jsPsych.plugins["horizons-task"] = (function() {
 	//Return the plugin object which contains the trial
 	return plugin;
 })();
-
-  
