@@ -4,6 +4,7 @@
     <title>Horizons Task</title>
     <script src="jspsych-6.1.0/jspsych.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-horizons-task.js"></script>
     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
   </head>
@@ -11,67 +12,6 @@
   <script>
     /* create timeline */
     var timeline = [];
-
-    /* define welcome message trial */
-    var welcome = {
-    type: "html-keyboard-response",
-    stimulus: "Welcome to the experiment. Press any key to begin."
-    };
-    timeline.push(welcome);
-
-    /* define instructions trials */
-    var instructions_1 = {
-      type: "html-keyboard-response",
-      stimulus: "<p>In this experiment, you will be able to choose between two " +
-          " different slot machines (bandits) with different average payouts of points. </p>" +
-          "Your goal is to earn the maximum number of points." +
-          "<p>To choose the left bandit, press the <strong>left</strong> arrow key. To choose the right bandit, " +
-          "press the <strong>right</strong> arrow key.</p>",
-    };
-    timeline.push(instructions_1);
-
-    var instructions_2 = {
-        type: "html-keyboard-response",
-        stimulus: "<p>Games will be either 5 or 10 rounds. For the first <strong>four</strong> rounds of each game, " + 
-          "you will be told to select either the right or left option. This will be indicated by a green square in the appropriate box. " + 
-          "<p>If a green square appears in the left bandit, you must press the left arrow to reveal that payout and continue. " + 
-          "If a green square appears in the right bandit, you must press the right arrow to reveal that payout and continue.</p>" + 
-          "Starting with the <strong>fifth</strong> round, you will be able to make your own choices. This will be indicated by green square in both the left and right bandits. </p>" + 
-          "<p>When you finish a game, you can press any key to continue to the next one.</p>" +
-          "<p>Press any key to continue to the demonstration.</p>",
-    };
-    timeline.push(instructions_2);
-
-    var demo_instructions = {
-        type: "html-keyboard-response",
-        stimulus: "For this demonstration, you will be asked to complete two games to ensure you understand the instructions." + 
-            "<p>Press any key to proceed.</p>",
-    }
-    timeline.push(demo_instructions)
-
-    var demo_game1 = {
-        type: "horizons-task",
-        horizon: 5,
-        colors: ["lightblue", "orange"],
-        means: [40, 70],
-        forced_choices: ['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow']
-    }
-    timeline.push(demo_game1)
-
-    var demo_game2 = {
-        type: "horizons-task",
-        horizon: 10,
-        colors: ["orange", "lightblue"],
-        means: [60, 48],
-        forced_choices: ['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']
-    }
-    timeline.push(demo_game2)
-
-    var instructions_3 = {
-        type: "html-keyboard-response",
-        stimulus: "Great job! You are now ready to begin the experiment." + "<p>Press any key to continue to the task</p>",
-    };
-    timeline.push(instructions_3);
 
     var games = []
 
@@ -182,14 +122,106 @@
         }
     }
 
+    // generate all games before the participant enters the experiment
     generate_games();
     games = jsPsych.randomization.shuffle(games);
+
+    // define instructions
+    var instr1 = {
+        type: 'instructions',
+        pages: [
+            "Welcome! Thank you for volunteering for this experiment. Use the right arrow key to move forward through these instructions.",        
+            "This is a paid experiment. You will play a gambling game and the amount we pay you (up to $%d) will be based on your performance. " 
+                + "Please read through this instruction carefully.",
+            "In this experiment you will do two things.  First you will play a gambling task in which you will make choices between two options. " 
+                + "This will take about 30 minutes.  Next you will fill in a personality questionnaire.  This will take about 10 minutes.  When you're done "
+                + "please return to the main lab for debriefing.",
+            "In this experiment - the gambling task - we would like you to choose between two one-armed bandits of the sort you might find in a casino.",
+            "The one-armed bandits will be represented like this:<p><img src='img/instr1.png'></img></p>",
+            "Every time you choose to play a particular bandit, the lever will be pulled like this ...<p><img src='img/instr1.png'></img></p>",
+            "... and the payoff will be shown like this. For example, in this case, the left bandit has been played and is paying out 38 points."
+                + "<p><img src='img/instr2.png'></img></p>",
+            "The points you earn by playing the bandits will be converted into REAL money at the end of the experiment, so the more points you get, "
+                + "the more money you will earn.",
+            "The points you earn by playing the bandits will be converted into a reward of time during the experiment, so the more points you get, "
+                + "the faster you will get out of this room and get your credits.",
+            "Your goal is to maximize the points you get through out the task. Try your best to get as many points as you can!",
+            "During one game, each bandit tends to pay out about the same amount of reward on average, but there is variability in the reward on any given play.",
+            "For example, the average reward for the bandit on the right might be 50 points, but on the first play we might see a reward of 49 points because of "
+                + "the variability...<p><img src='img/instr3.png'></img></p>",
+            "... on the second play we might get 56 points ...<p><img src='img/instr4.png'></img></p>",
+            "... if we open a third box on the right we might get 37 points this time ...<p><img src='img/instr5.png'></img></p>",
+            "... and so on, such that if we were to play the right bandit 10 times in a row we might see these rewards ...<p><img src='img/instr6.png'></img></p>",
+            "Both bandits will have the same kind of variability and this variability will stay constant throughout the experiment.",
+            "During one game, one of the bandits will always have a higher average reward and hence is the better option to choose on average.",
+            "On any trial you can only choose to play one of the two bandits and the number of trials in each game is determined by the height of the bandits. "
+                + "For example, when the bandits are 10 boxes high, there are 10 trials in that game ...<p><img src='img/instr7.png'></img></p>",
+            "... when the stacks are 5 boxes high there are only 5 trials in the game<p><img src='img/instr1.png'></img></p>",
+            "The first 4 trials in each game are instructed trials. These instructed trials will be indicated by a green square inside the box we want you to open. "
+                + "You MUST press the button to choose this option. For example, if you are instructed to choose the left box on the first trial, "
+                + "you will see this:<p><img src='img/instr8.png'></img></p>",
+            "If you are instructed to choose the right box on the second trial, you will see this:<p><img src='img/instr9.png'></img></p>",
+            "Once these instructed trials are complete, you will have a free choice between the two stacks that is indicated by two green squares inside the two "
+                + "boxes you are choosing between.<p><img src='img/instr10.png'></img></p>",
+            "The reward will show up 2 seconds after you made your choice. This delay is to allow us to record your brain activity.",
+            "Throughout the task we will be tracking your eyes. To help us better track your eyes, please stay in the chin rest throughout the task. "
+                + "Each game begins with the presentation of a fixation cross like this for 1 second ... please try to stare at this cross while it is displayed.",
+            "After 1 second, the fixation cross will disappear, the bandits will appear and you are free to play the game. After the bandit shows up, feel "
+                + "free to look where you want to.",
+            "After 3 more seconds a GO cue will appear at which point you are free to choose between the two options",
+            "In a 10-trials game, the remaining 5 choices can be made quickly.",
+            "So ... to be sure that everything makes sense let's work through a few example games ..."
+                + "<p>Press the <strong>left arrow</strong> to play the left bandit</p><p>Press the <strong>right arrow</strong> to play the right bandit</p>",
+        ],
+        show_clickable_nav: false
+    }
+    timeline.push(instr1)
+
+    // demo games
+    demo1 = {
+        type: "horizons-task",
+        horizon: 10,
+        colors: ["lightblue", "orange"],
+        means: [60, 70],
+        forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+    }
+    timeline.push(demo1)
+
+    demo2 = {
+        type: "horizons-task",
+        horizon: 5,
+        colors: ["orange", "lightblue"],
+        means: [40, 20],
+        forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+    }
+    timeline.push(demo2)
+
+    // finish instructions
+    var instr2 = {
+        type: "instructions",
+        pages: [
+            "Great job! Now you know the rule!",
+            "Just to repeat, to make your choice:<p>Press the <strong>left arrow</strong> to play the left bandit</p><p>Press the <strong>right arrow</strong>"
+                + "to play the right bandit</p>",
+            "We want to see how well a human being can do in this task, try your best to get as many points as you can!"
+        ],
+        show_clickable_nav: false
+    }
+    timeline.push(instr2)
+
+    var begin = {
+        type: "html-keyboard-response",
+        stimulus: "Press space when you are ready to begin. Good luck!",
+        choices: ['space']
+    }
+    timeline.push(begin)
     
+    // push games onto timeline
     for (var i = 0; i < 80; i++){
         timeline.push(games[i])
     }
 
-    /* start the experiment */
+    // start the experiment
     jsPsych.init({
         timeline: timeline,
         show_progress_bar: true,
