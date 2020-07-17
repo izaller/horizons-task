@@ -309,30 +309,14 @@ jsPsych.plugins["horizons-task"] = (function() {
             return ((u % 1e-8 > 5e-9 ? 1 : -1) * (Math.sqrt(-Math.log(Math.max(1e-9, u)))-0.618))*1.618 * sigma + mean;
         }
 
-        // mean of one bandit is set to either 40 or 60
-        // the mean of the other was set relative to the mean of the first, such that the difference between the two was sampled from 4, 8, 12, 20 and 30. 
-        function set_means(){
-            var rand = Math.random(); // generate a random number between 0 and 1
+        // return x coordinate of the terminal end of the bandit arm
+        function getX(){
 
-            var offset = jsPsych.randomization.sampleWithReplacement([-30, -20, -12, -8, -4, 4, 8, 12, 20, 30], 1);
-    
-            // choose one of the bandits to set to either 40 or 60
-            if (rand < 0.25) {
-                left_mu = 40;
-                right_mu = Number(left_mu) + Number(offset);
-            }
-            else if (rand < 0.5) {
-                left_mu = 60;
-                right_mu = Number(left_mu) + Number(offset);
-            }
-            else if (rand < 0.75) {
-                right_mu = 40;
-                left_mu = Number(right_mu) + Number(offset);
-            }
-            else {
-                right_mu = 60;
-                left_mu = Number(right_mu) + Number(offset);
-            }
+        }
+
+        // return y coordinate of the terminal end of the bandit arm
+        function getY(){
+
         }
 
         function drawBandit(){            
@@ -344,11 +328,32 @@ jsPsych.plugins["horizons-task"] = (function() {
                 // draw left bandit
                 ctx.strokeStyle = left_color;
                 ctx.strokeRect(left_x, bandit_Y_initial + h*i, w, h); // ...(x of upper left, y of upper left, width, height) ** top left = (0, 0)
-
+                
                 // draw right bandit
                 ctx.strokeStyle = right_color;
                 ctx.strokeRect(right_x, bandit_Y_initial + h*i, w, h); // ...(x of upper left, y of upper left, width, height) ** top left = (0, 0)
             }
+
+            // draw arms (start at top of third box)
+            var radius = 15 * scalefactor;
+
+            // left arm
+            ctx.strokeStyle = ctx.fillStyle = left_color;
+            ctx.beginPath();
+            ctx.moveTo(left_x, bandit_Y_initial + 2*h);
+            ctx.lineTo(left_x - w, bandit_Y_initial + 1.5*h);
+            ctx.stroke();
+            ctx.arc(left_x - w, bandit_Y_initial + 1.5*h, radius, 0, 2 * Math.PI, false);
+            ctx.fill();
+
+            // right arm
+            ctx.strokeStyle = ctx.fillStyle = right_color;
+            ctx.beginPath();
+            ctx.moveTo(right_x + w, bandit_Y_initial + 2*h);
+            ctx.lineTo(right_x + 2*w, bandit_Y_initial + 1.5*h);
+            ctx.stroke();
+            ctx.arc(right_x + 2*w, bandit_Y_initial + 1.5*h, radius, 0, 2 * Math.PI, false);
+            ctx.fill();
 
             // draw in first forced choice
             ctx.fillStyle = 'green';
