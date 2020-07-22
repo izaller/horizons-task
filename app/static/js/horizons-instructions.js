@@ -75,10 +75,9 @@ var INSTRUCTIONS_02 = {
   type: "instructions",
   pages: [
     "Great job! Now you know the rule!",
-    "Just to repeat, to make your choice:<p>Press the <strong>left arrow</strong> to play the left bandit</p><p>Press the <strong>right arrow</strong>"
-    + "to play the right bandit</p>",
-    "We want to see how well a human being can do in this task, try your best to get as many points as you can!"
-  ],
+    "Just to repeat, to make your choice:<p>Press the <strong>left arrow</strong> to play the left machine</p><p>Press the <strong>right arrow</strong> to play the right machine</p>",
+    "<p>At the end of the task, the total number of points you've<br>earned will be converted into a <b>performance bonus.</b></p>",
+    "<p>Next, we will ask you some questions about the task.<br>You need to answer all questions correctly to proceed.</p>",  ],
   show_clickable_nav: true,
   button_label_previous: "Prev",
   button_label_next: "Next"
