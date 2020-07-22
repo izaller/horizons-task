@@ -1,11 +1,14 @@
 //------------------------------------//
-// Define metadata.
+// Define parameters.
 //------------------------------------//
 
 // Define image scaling CSS.
 const style = "width:auto; height:auto; max-width:100%; max-height:50vh;";
 
-// Define images to preload.
+//------------------------------------//
+// Define images for preloading.
+//------------------------------------//
+
 preload_images = [
   "../static/img/instr01.png",
   "../static/img/instr02.png",
@@ -23,7 +26,8 @@ preload_images = [
 // Define instructions.
 //------------------------------------//
 
-var instr1 = {
+// Instructions (part 01)
+var INSTRUCTIONS_01 = {
   type: 'instructions',
   pages: [
     "<p><b>We are now beginning the experiment.</b><br>Use the right arrow key to move forward through these instructions.</p>",
@@ -49,16 +53,8 @@ var instr1 = {
   button_label_next: "Next"
 }
 
-// demo games
-demo1 = {
-  type: "horizons-task",
-  horizon: 10,
-  colors: ["lightblue", "orange"],
-  means: [60, 70],
-  forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']
-}
-
-demo2 = {
+// Practice games
+var PRACTICE_H5 = {
   type: "horizons-task",
   horizon: 5,
   colors: ["orange", "lightblue"],
@@ -66,8 +62,16 @@ demo2 = {
   forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']
 }
 
-// finish instructions
-var instr2 = {
+var PRACTICE_H10 = {
+  type: "horizons-task",
+  horizon: 10,
+  colors: ["lightblue", "orange"],
+  means: [60, 70],
+  forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+}
+
+// Instructions (part 02)
+var INSTRUCTIONS_02 = {
   type: "instructions",
   pages: [
     "Great job! Now you know the rule!",
@@ -75,11 +79,49 @@ var instr2 = {
     + "to play the right bandit</p>",
     "We want to see how well a human being can do in this task, try your best to get as many points as you can!"
   ],
-  show_clickable_nav: false
+  show_clickable_nav: true,
+  button_label_previous: "Prev",
+  button_label_next: "Next"
 }
 
-var begin = {
-  type: "html-keyboard-response",
-  stimulus: "Press space when you are ready to begin. Good luck!",
-  choices: ['space']
+// Define instructions loop.
+var INSTRUCTIONS = {
+  timeline: [
+    INSTRUCTIONS_01,
+    PRACTICE_H5,
+    PRACTICE_H10,
+    INSTRUCTIONS_02
+  ]
+}
+
+//------------------------------------//
+// Define transition screens.
+//------------------------------------//
+
+var READY_01 = {
+  type: 'instructions',
+  pages: [
+    "Great job! You've passed the comprehension check.",
+    "Get ready to begin <b>Block 1/2</b>. It will take ~X minutes.<br>Press next when you're ready to start.",
+  ],
+  show_clickable_nav: true,
+  button_label_previous: "Prev",
+  button_label_next: "Next",
+  on_finish: function(trial) {
+    pass_message('starting block 1');
+  }
+}
+
+var READY_02 = {
+  type: 'instructions',
+  pages: [
+    "Take a break for a few moments and press any button when you are ready to continue.",
+    "Get ready to begin <b>Block 2/2</b>. It will take ~X minutes.<br>Press next when you're ready to start.",
+  ],
+  show_clickable_nav: true,
+  button_label_previous: "Prev",
+  button_label_next: "Next",
+  on_finish: function(trial) {
+    pass_message('starting block 2');
+  }
 }
