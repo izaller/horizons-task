@@ -24,12 +24,6 @@ jsPsych.plugins["horizons-task"] = (function() {
             default: undefined,
             description: "The preselected first four choices (left vs right)"
         },
-        // response_ends_trial: { ****TODO: implement*****
-        //     type: jsPsych.plugins.parameterType.BOOL,
-        //     pretty_name: "Response ends trial",
-        //     default: true,
-        //     description: "If true, then any valid key will end the trial"
-        // },
         horizon: {
             type: jsPsych.plugins.parameterType.INT,
             pretty_name: "Horizon",
@@ -59,7 +53,7 @@ jsPsych.plugins["horizons-task"] = (function() {
             type: jsPsych.plugins.parameterType.STRING,
             pretty_name: "bandit colors",
             array: true,
-		    default: [],//["orange", "lightblue"], // change default color
+		    default: [],
 		    description: "The colors of the bandits" 
         },
       }
@@ -74,10 +68,8 @@ jsPsych.plugins["horizons-task"] = (function() {
         
         //Note on '||' logical operator: If the first option is 'undefined', it evalutes to 'false' and the second option is returned as the assignment
         trial.choices = assignParameterValue(trial.choices, []);
-        trial.trial_duration = assignParameterValue(trial.trial_duration, 500);
         trial.left = assignParameterValue(trial.left, 'leftarrow');
         trial.right = assignParameterValue(trial.right, 'rightarrow');
-        trial.response_ends_trial = assignParameterValue(trial.response_ends_trial, true);
         trial.horizon = assignParameterValue(trial.horizon, 5);
         trial.means = assignParameterValue(trial.means, [40, 50]);
         trial.colors = assignParameterValue(trial.colors, []);
@@ -95,6 +87,7 @@ jsPsych.plugins["horizons-task"] = (function() {
 
         var left_color = trial.colors[0];
         var right_color = trial.colors[1];
+        var points_earned = 0;
 
 
 		//--------------------------------------
@@ -156,13 +149,6 @@ jsPsych.plugins["horizons-task"] = (function() {
         var keys_pressed = []; // stores the key the subject pressed in each round (round 1 = index 0)
         var response_times = []; // stores the subject's response time for each round (round 1 = index 0)
 
-        
-        //Initialize object to store the response data. Default values of -1 are used if the trial times out and the subject has not pressed a valid key
-		var response = {
-			rt: -1,
-            key: -1,
-        }
-
         //Declare global variable to be defined in startKeyboardListener function and to be used in end_trial function
         var keyboardListener; 
         
@@ -195,6 +181,7 @@ jsPsych.plugins["horizons-task"] = (function() {
 		}
 
         function end_trial(){
+
             //Kill the keyboard listener if keyboardListener has been defined
 			if (typeof keyboardListener !== 'undefined') {
 				jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
@@ -212,8 +199,7 @@ jsPsych.plugins["horizons-task"] = (function() {
                 "right_mu": right_mu,
                 "left_numbers": left_numbers,
                 "right_numbers": right_numbers,
-                // total points earned?
-                // time to complete game?
+                "points_earned": points_earned
             }
 
             //Remove the canvas as the child of the display_element element
@@ -254,39 +240,33 @@ jsPsych.plugins["horizons-task"] = (function() {
                     allow_held_key: false
                 });
             }
-            else { // end trial with any key press
-                keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
-                    callback_function: end_trial,
-                    valid_responses: jsPsych.ALL_KEYS,
-                    rt_method: 'performance',
-                    persist: false,
-                    allow_held_key: false
-                });
+            else { // wait 3 seconds, then end trial
+                jsPsych.pluginAPI.setTimeout(function() {
+                    end_trial();
+                  }, 1500);
             }
 
             // add the response to the array
-            keys_pressed.push(info.key);
+            keys_pressed.push(jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(info.key));
             response_times.push(info.rt);
 
             // determine
             var text_left = "XX";
             var text_right = "XX";
-            if (jsPsych.pluginAPI.compareKeys(info.key, trial.left))
+            if (jsPsych.pluginAPI.compareKeys(info.key, trial.left)) {
                 text_left = left_numbers[round];
-            else if (jsPsych.pluginAPI.compareKeys(info.key, trial.right))
+                points_earned += left_numbers[round];
+            }
+            else if (jsPsych.pluginAPI.compareKeys(info.key, trial.right)) {
                 text_right = right_numbers[round];
+                points_earned += right_numbers[round];
+            }
 
             // draw an updated version of the bandit
             updateBandit(text_left, text_right);
 
             // update round number and check if we have completed the game
             round++;
-
-			//If the parameter is set such that the response ends the trial, then kill the timeout and end the trial
-			// if (trial.response_ends_trial) {
-			// 	window.clearTimeout(timeoutID);
-			// 	end_trial();
-			// }
 
 		}
 
@@ -307,16 +287,6 @@ jsPsych.plugins["horizons-task"] = (function() {
         function gaussianRandom(mean, sigma) {
             let u = Math.random()*0.682;
             return ((u % 1e-8 > 5e-9 ? 1 : -1) * (Math.sqrt(-Math.log(Math.max(1e-9, u)))-0.618))*1.618 * sigma + mean;
-        }
-
-        // return x coordinate of the terminal end of the bandit arm
-        function getX(){
-
-        }
-
-        // return y coordinate of the terminal end of the bandit arm
-        function getY(){
-
         }
 
         function drawBandit(){            
@@ -355,13 +325,13 @@ jsPsych.plugins["horizons-task"] = (function() {
             ctx.arc(right_x + 2*w, bandit_Y_initial + 1.5*h, radius, 0, 2 * Math.PI, false);
             ctx.fill();
 
-            // draw in first forced choice
+            // // draw in first forced choice
             ctx.fillStyle = 'green';
             if (jsPsych.pluginAPI.compareKeys(forced_choices[0], left)) { // force left
-                ctx.fillRect(left_x + lineWidth/2, bandit_Y_initial + h*round + lineWidth/2, w - lineWidth, h - lineWidth);
+               ctx.fillRect(left_x + lineWidth/2, bandit_Y_initial + h*round + lineWidth/2, w - lineWidth, h - lineWidth);
             }
             else { // force right
-                ctx.fillRect(right_x + lineWidth/2, bandit_Y_initial + h*round + lineWidth/2, w - lineWidth, h - lineWidth);
+               ctx.fillRect(right_x + lineWidth/2, bandit_Y_initial + h*round + lineWidth/2, w - lineWidth, h - lineWidth);
             }
         }
 
@@ -411,17 +381,11 @@ jsPsych.plugins["horizons-task"] = (function() {
 
 
         function playGame(){
-
             // display the bandit
             drawBandit();
 
             //Start to listen to subject's key responses
             startKeyboardListener(); 
-
-            // if the stopping condition has been reached, stop the trial
-            if (round == horizon) {
-                end_trial();
-            }
         }
 
         //----horizons Functions End----
