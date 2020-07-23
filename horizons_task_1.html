@@ -14,6 +14,7 @@
     var timeline = [];
 
     var games = []
+    var messages = []
 
     function generate_games(){
 
@@ -70,7 +71,8 @@
                 },
                 forced_choices: function(){
                     return jsPsych.randomization.sampleWithoutReplacement(forced_choices_two_two, 1)[0];
-                }
+                },
+                data: {test_part: "live"}
             }
 
             game_h6_two_two = {
@@ -84,7 +86,8 @@
                 },
                 forced_choices: function(){
                     return jsPsych.randomization.sampleWithoutReplacement(forced_choices_two_two, 1)[0];
-                }
+                },
+                data: {test_part: "live"}
             }
 
             game_h1_three_one = {
@@ -98,7 +101,8 @@
                 },
                 forced_choices: function(){
                     return jsPsych.randomization.sampleWithoutReplacement(forced_choices_three_one, 1)[0];
-                }
+                },
+                data: {test_part: "live"}
             }
 
             game_h6_three_one = {
@@ -112,7 +116,8 @@
                 },
                 forced_choices: function(){
                     return jsPsych.randomization.sampleWithoutReplacement(forced_choices_three_one, 1)[0];
-                }
+                },
+                data: {test_part: "live"}
             }
 
             games.push(game_h1_two_two);
@@ -122,9 +127,21 @@
         }
     }
 
+    function generate_end_message(){
+        for (var i = 0; i < 80; i++) {
+            var end_message = {
+                type: "html-keyboard-response",
+                stimulus: "End of game " + Number(i + 1) + ". Press any key to proceed",
+                choices: jsPsych.ALL_KEYS
+            }
+            messages.push(end_message)
+        }
+    }
+    
     // generate all games before the participant enters the experiment
     generate_games();
     games = jsPsych.randomization.shuffle(games);
+    generate_end_message();
 
     // define instructions
     var instr1 = {
@@ -163,13 +180,6 @@
             "If you are instructed to choose the right box on the second trial, you will see this:<p><img src='img/instr9.png'></img></p>",
             "Once these instructed trials are complete, you will have a free choice between the two stacks that is indicated by two green squares inside the two "
                 + "boxes you are choosing between.<p><img src='img/instr10.png'></img></p>",
-            "The reward will show up 2 seconds after you made your choice. This delay is to allow us to record your brain activity.",
-            "Throughout the task we will be tracking your eyes. To help us better track your eyes, please stay in the chin rest throughout the task. "
-                + "Each game begins with the presentation of a fixation cross like this for 1 second ... please try to stare at this cross while it is displayed.",
-            "After 1 second, the fixation cross will disappear, the bandits will appear and you are free to play the game. After the bandit shows up, feel "
-                + "free to look where you want to.",
-            "After 3 more seconds a GO cue will appear at which point you are free to choose between the two options",
-            "In a 10-trials game, the remaining 5 choices can be made quickly.",
             "So ... to be sure that everything makes sense let's work through a few example games ..."
                 + "<p>Press the <strong>left arrow</strong> to play the left bandit</p><p>Press the <strong>right arrow</strong> to play the right bandit</p>",
         ],
@@ -178,30 +188,41 @@
     timeline.push(instr1)
 
     // demo games
-    demo1 = {
+    var demo1 = {
         type: "horizons-task",
         horizon: 10,
         colors: ["lightblue", "orange"],
         means: [60, 70],
-        forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+        forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow'],
+        data: {test_part: "demo"}
     }
-    timeline.push(demo1)
 
-    demo2 = {
+    var demo_message = {
+        type: "html-keyboard-response",
+        stimulus: "End of demo game. Press any key to proceed",
+        choices: jsPsych.ALL_KEYS
+    }
+
+    var demo2 = {
         type: "horizons-task",
         horizon: 5,
         colors: ["orange", "lightblue"],
         means: [40, 20],
-        forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+        forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow'],
+        data: {test_part: "demo"}
     }
+    
+    timeline.push(demo1)
+    timeline.push(demo_message)
     timeline.push(demo2)
+    timeline.push(demo_message)
 
     // finish instructions
     var instr2 = {
         type: "instructions",
         pages: [
             "Great job! Now you know the rule!",
-            "Just to repeat, to make your choice:<p>Press the <strong>left arrow</strong> to play the left bandit</p><p>Press the <strong>right arrow</strong>"
+            "Just to repeat, to make your choice:<p>Press the <strong>left arrow</strong> to play the left bandit</p><p>Press the <strong>right arrow</strong> "
                 + "to play the right bandit</p>",
             "We want to see how well a human being can do in this task, try your best to get as many points as you can!"
         ],
@@ -219,7 +240,21 @@
     // push games onto timeline
     for (var i = 0; i < 80; i++){
         timeline.push(games[i])
+        timeline.push(messages[i])
     }
+
+    var end = {
+        type: "html-keyboard-response",
+        stimulus: 
+        function() {
+            var trials = jsPsych.data.get().filter({test_part: 'live'});
+            var points = trials.select("points_earned").sum();
+
+            return "<p>Thanks for participating! You earned " + points + " points across the 80 games." 
+                + "<p>Press any key to finish the experiment.</p>"
+            }
+    }
+    timeline.push(end);
 
     // start the experiment
     jsPsych.init({
