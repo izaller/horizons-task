@@ -129,7 +129,7 @@ var READY_01 = {
   type: 'instructions',
   pages: [
     "Great job! You've passed the comprehension check.",
-    "Get ready to begin <b>Block 1/2</b>. It will take ~X minutes.<br>Press next when you're ready to start.",
+    "Get ready to begin <b>Block 1/2</b>. It will take ~6 minutes.<br>Press next when you're ready to start.",
   ],
   show_clickable_nav: true,
   button_label_previous: "Prev",
@@ -143,7 +143,7 @@ var READY_02 = {
   type: 'instructions',
   pages: [
     "Take a break for a few moments and press any button when you are ready to continue.",
-    "Get ready to begin <b>Block 2/2</b>. It will take ~X minutes.<br>Press next when you're ready to start.",
+    "Get ready to begin <b>Block 2/2</b>. It will take ~6 minutes.<br>Press next when you're ready to start.",
   ],
   show_clickable_nav: true,
   button_label_previous: "Prev",
@@ -151,4 +151,15 @@ var READY_02 = {
   on_finish: function(trial) {
     pass_message('starting block 2');
   }
+}
+
+// Define finish screen.
+var FINISHED = {
+  type: 'pit-instructions',
+  pages: [
+    "Great job! You've finished the task.",
+  ],
+  show_clickable_nav: true,
+  button_label_previous: "Prev",
+  button_label_next: "Next",
 }
