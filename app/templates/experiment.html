@@ -16,6 +16,7 @@
 
   <!-- Load jsPsych plug-ins -->
   <script src="../static/js/jspsych-horizons-task.js"></script>
+  <script src="../static/js/jspsych-horizons-comprehension.js"></script>
   <script src="../static/lib/jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
 
   <!-- Load CSS styles -->
@@ -25,49 +26,58 @@
 <body></body>
 <script>
 
-// Display alert message on back/refresh.
-// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
-function verify_unload(e){
-  e.preventDefault();
-  (e || window.event).returnValue = null;
-  return null;
-};
-window.addEventListener("beforeunload", verify_unload);
+  // Display alert message on back/refresh.
+  // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
+  function verify_unload(e){
+    e.preventDefault();
+    (e || window.event).returnValue = null;
+    return null;
+  };
+  window.addEventListener("beforeunload", verify_unload);
 
-// Define timeline.
-var timeline = [];
-timeline = timeline.concat(INSTRUCTIONS);        // Instructions loop
-timeline = timeline.concat(READY_01);               // Ready check
-timeline = timeline.concat(HORIZONS.slice(0,40));   // Horizons task
-timeline = timeline.concat(READY_02);               // Ready check
-timeline = timeline.concat(HORIZONS.slice(40,80));  // Horizons task
+  // Define global variables.
+  var low_quality = false;
 
-// start the experiment
-jsPsych.init({
-  timeline: timeline,
-  preload_images: preload_images,
-  show_progress_bar: true,
-  on_finish: function() {
+  // Define timeline.
+  var timeline = [];
+  timeline = timeline.concat(INSTRUCTIONS);           // Instructions loop
+  timeline = timeline.concat(READY_01);               // Ready check
+  timeline = timeline.concat(HORIZONS.slice(0,40));   // Horizons task
+  timeline = timeline.concat(READY_02);               // Ready check
+  timeline = timeline.concat(HORIZONS.slice(40,80));  // Horizons task
 
-    // Remove requirement to verify redirect
-    window.removeEventListener("beforeunload", verify_unload);
+  // start the experiment
+  jsPsych.init({
+    timeline: timeline,
+    preload_images: preload_images,
+    show_progress_bar: true,
+    on_finish: function() {
 
-    // Add interactions to the data variable
-    var interaction_data = jsPsych.data.getInteractionData();
-    jsPsych.data.get().addToLast({interactions: interaction_data.json()});
+      // Remove requirement to verify redirect
+      window.removeEventListener("beforeunload", verify_unload);
 
-    // Display jsPsych data in viewport.
-    jsPsych.data.displayData();
+      // Add interactions to the data variable
+      var interaction_data = jsPsych.data.getInteractionData();
+      jsPsych.data.get().addToLast({interactions: interaction_data.json()});
 
-    // Save complete dataset to disk.
-    // pass_data("{{workerId}}", "{{assignmentId}}", "{{hitId}}");
+      // Display jsPsych data in viewport.
+      jsPsych.data.displayData();
 
-    // Save rejected dataset to disk.
-    // reject_data('1011')
+      if (low_quality || num_loops >= max_loops) {
 
-  }
+        // Save rejected dataset to disk.
+        // reject_data('1011')
 
-});
+      } else {
+
+        // Save complete dataset to disk.
+        // pass_data("{{workerId}}", "{{assignmentId}}", "{{hitId}}");
+
+      }
+
+    }
+
+  });
 
 </script>
 </html>
