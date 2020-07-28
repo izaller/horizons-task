@@ -44,7 +44,8 @@ var pswq = {
     "I notice that I have been worrying about things.",
     "Once I start worrying, I can't stop.",
     "I worry all the time.",
-    "I worry about projects until they are done."
+    "I worry about projects until they are done.",
+    "I worry about the 1981 Rugby World Cup."
   ],
   scale: [
     "Not at all<br>typical of me",              // scored as 0
@@ -54,8 +55,8 @@ var pswq = {
     "Very<br>typical of me"                     // scored as 4
   ],
   reverse: [
-    false, false, true, false, false, false, false, true,
-    false, true, true, false, false, false, false, false
+    true, false, true, false, false, false, false, true,
+    false, true, true, false, false, false, false, false, false
   ],
   instructions: 'Select the option that best describes how typical or characteristic each item is of you.',
   randomize_question_order: true,
@@ -80,7 +81,8 @@ var ius12 = {
     "I can't stand being taken by surprise.",
     "The smallest doubt can stop me from acting.",
     "I should be able to organize everything in advance.",
-    "I must get away from all uncertain situations."
+    "I must get away from all uncertain situations.",
+    "I need oxygen in order to stay alive."
   ],
   scale: [
     "Not at all<br>characteristic<br>of me",
@@ -90,7 +92,7 @@ var ius12 = {
     "Entirely<br>characteristic<br>of me"
   ],
   reverse: [
-    false, false, false, false, false, false,
+    false, false, false, false, false, false, false,
     false, false, false, false, false, false
   ],
   instructions: "Read each statement carefully and select which best describes you.",
@@ -119,7 +121,8 @@ var nfc = {
     "I find that establishing a consistent routine enables me to enjoy life more.",
     "I enjoy having a clear and structured mode of life.",
     "I do not usually consult many different opinions before forming my own view.",
-    "I dislike unpredictable situations."
+    "I dislike unpredictable situations.",
+    "I dislike seeing bad things happen to the people I love."
   ],
   scale: [
     "Strongly<br>disagree",
@@ -131,7 +134,7 @@ var nfc = {
   ],
   reverse: [
     false, false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false
+    false, false, false, false, false, false, false, false
   ],
   instructions: "Read each of the following statements and decide how much you agree with each according to your beliefs and experiences.",
   randomize_question_order: true,
