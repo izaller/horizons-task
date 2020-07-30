@@ -39,7 +39,7 @@ var pswq = {
     "I find it easy to dismiss worrisome thoughts.",
     "As soon as I finish one task, I start to worry about everything else I have to do.",
     "I never worry about anything.",
-    "When there's nothing more I can do about a concern, I don't worry about it any more.",
+    "When there's nothing more I can do about a concern,<br>I don't worry about it any more.",
     "I have been a worrier all my life.",
     "I notice that I have been worrying about things.",
     "Once I start worrying, I can't stop.",

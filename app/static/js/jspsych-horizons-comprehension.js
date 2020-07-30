@@ -37,10 +37,10 @@ jsPsych.plugins['horizons-comprehension'] = (function() {
 
     // Define comprehension check questions.
     var prompts = [
-      "<b><i>True</i> or <i>False</i>:</b>&nbsp;&nbsp;One machine will always be better on average than the other. ",
-      "<b><i>True</i> or <i>False</i>:</b>&nbsp;&nbsp;a machine will pay out the same number of points every play.",
-      "<b><i>True</i> or <i>False</i>:</b>&nbsp;&nbsp; I will be free to choose any machine during the first turn.",
-      "<b><i>True</i> or <i>False</i>:</b>&nbsp;&nbsp;The points I earn will affect my performance bonus.",
+      "<b><i>True</i> or <i>False</i>:</b>  One machine will always be better on average than the other. ",
+      "<b><i>True</i> or <i>False</i>:</b>  A machine will pay out the same number of points on every play.",
+      "<b><i>True</i> or <i>False</i>:</b>  I will be free to choose any machine on the first turn of a game.",
+      "<b><i>True</i> or <i>False</i>:</b>  The points I earn will affect my performance bonus.",
     ];
 
     // Define correct answers.

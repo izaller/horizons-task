@@ -51,7 +51,6 @@
   timeline = timeline.concat(HORIZONS.slice(0,40));   // Horizons task
   timeline = timeline.concat(READY_02);               // Ready check
   timeline = timeline.concat(HORIZONS.slice(40,80));  // Horizons task
-  timeline = timeline.concat(FINISHED);               // Finished screen
   timeline = timeline.concat(DEMO);                   // Demographics
   timeline = timeline.concat(DEBRIEF);                // Debriefing form
 
@@ -70,17 +69,17 @@
       jsPsych.data.get().addToLast({interactions: interaction_data.json()});
 
       // Display jsPsych data in viewport.
-      jsPsych.data.displayData();
+      // jsPsych.data.displayData();
 
       if (low_quality || num_loops >= max_loops) {
 
         // Save rejected dataset to disk.
-        // reject_data('1011')
+        reject_data('1011')
 
       } else {
 
         // Save complete dataset to disk.
-        // pass_data("{{workerId}}", "{{assignmentId}}", "{{hitId}}");
+        pass_data("{{workerId}}", "{{assignmentId}}", "{{hitId}}");
 
       }
 
