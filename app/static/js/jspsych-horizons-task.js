@@ -129,7 +129,7 @@ jsPsych.plugins["horizons-task"] = (function() {
     var scalefactor = canvasHeight / 1080; // scalefactor allows different window sizes
 
     var w = 120 * scalefactor; // width of each box of the bandit
-    var h = 90 * scalefactor; // height of each box of the bandit
+    var h = 70 * scalefactor; // height of each box of the bandit
     var font_size = Math.round(40 * scalefactor) + "px"; // font size for text in the bandit
 
     var left_x = centerX - 4 * w / 3; // x coordinate of top left corner of top box of left bandit
