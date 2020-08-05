@@ -7,6 +7,7 @@
     <script src="jspsych-6.1.0/plugins/jspsych-survey-multi-choice.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-horizons-task.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-cloze.js"></script>
     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
   </head>
   <body></body>
@@ -19,161 +20,93 @@
 
     function generate_games(){
 
-        var forced_choices_h1_two_two = [] // choices for a [2,2] game
+        var forced_22 = [] // choices for a [2,2] game
         for (var i = 0; i < 3; i++) {
-            forced_choices_h1_two_two.push(['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
-            forced_choices_h1_two_two.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-            forced_choices_h1_two_two.push(['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h1_two_two.push(['rightarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h1_two_two.push(['rightarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
-            forced_choices_h1_two_two.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
+            forced_22.push(['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
+            forced_22.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+            forced_22.push(['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
+            forced_22.push(['rightarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
+            forced_22.push(['rightarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
+            forced_22.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
         }
-        forced_choices_h1_two_two.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-        forced_choices_h1_two_two.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
+        forced_22.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+        forced_22.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
 
-        var forced_choices_h6_two_two = [] // choices for a [2,2] game
-        for (var i = 0; i < 3; i++) {
-            forced_choices_h6_two_two.push(['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
-            forced_choices_h6_two_two.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-            forced_choices_h6_two_two.push(['leftarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h6_two_two.push(['rightarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h6_two_two.push(['rightarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
-            forced_choices_h6_two_two.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
-        }
-        forced_choices_h6_two_two.push(['leftarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-        forced_choices_h6_two_two.push(['rightarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
-
-        var forced_choices_h1_three_one = [] // choices for a [3,1] and [1,3] game
+        var forced_31 = [] // choices for a [3,1] and [1,3] game
         for (var i = 0; i < 2; i++) {
-            forced_choices_h1_three_one.push(['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
-            forced_choices_h1_three_one.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h1_three_one.push(['leftarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
-            forced_choices_h1_three_one.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
-            forced_choices_h1_three_one.push(['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h1_three_one.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-            forced_choices_h1_three_one.push(['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
-            forced_choices_h1_three_one.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
+            forced_31.push(['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
+            forced_31.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
+            forced_31.push(['leftarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
+            forced_31.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
+            forced_31.push(['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
+            forced_31.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+            forced_31.push(['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
+            forced_31.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
         }
-        forced_choices_h1_three_one.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
-        forced_choices_h1_three_one.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
-        forced_choices_h1_three_one.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-        forced_choices_h1_three_one.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
-
-        var forced_choices_h6_three_one = [] // choices for a [3,1] and [1,3] game
-        for (var i = 0; i < 2; i++) {
-            forced_choices_h6_three_one.push(['leftarrow', 'leftarrow', 'leftarrow', 'rightarrow']);
-            forced_choices_h6_three_one.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h6_three_one.push(['leftarrow', 'rightarrow', 'leftarrow', 'leftarrow']);
-            forced_choices_h6_three_one.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
-            forced_choices_h6_three_one.push(['rightarrow', 'rightarrow', 'rightarrow', 'leftarrow']);
-            forced_choices_h6_three_one.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-            forced_choices_h6_three_one.push(['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']);
-            forced_choices_h6_three_one.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
-        }
-        forced_choices_h6_three_one.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
-        forced_choices_h6_three_one.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
-        forced_choices_h6_three_one.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
-        forced_choices_h6_three_one.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
+        forced_31.push(['leftarrow', 'leftarrow', 'rightarrow', 'leftarrow']);
+        forced_31.push(['rightarrow', 'leftarrow', 'leftarrow', 'leftarrow']);
+        forced_31.push(['rightarrow', 'rightarrow', 'leftarrow', 'rightarrow']);
+        forced_31.push(['leftarrow', 'rightarrow', 'rightarrow', 'rightarrow']);
 
         var colors = [];
         for (var i = 0; i < 10; i++) {
             colors.push(["orange", "lightblue"]);
             colors.push(["lightblue", "orange"]);
         }
-
-        var means_h1_two_two = [
+        
+        var means = [
             [40, 10], [40, 20], [40, 28], [40, 32], [40, 36],
             [40, 44], [40, 48], [40, 52], [40, 60], [40, 70],
             [60, 30], [60, 40], [60, 48], [60, 52], [60, 56],
             [60, 64], [60, 68], [60, 72], [60, 80], [60, 90]
         ]
 
-        var means_h6_two_two = [
-            [40, 10], [40, 20], [40, 28], [40, 32], [40, 36],
-            [40, 44], [40, 48], [40, 52], [40, 60], [40, 70],
-            [60, 30], [60, 40], [60, 48], [60, 52], [60, 56],
-            [60, 64], [60, 68], [60, 72], [60, 80], [60, 90]
-        ]
-
-        var means_h1_three_one = [
-            [40, 10], [40, 20], [40, 28], [40, 32], [40, 36],
-            [40, 44], [40, 48], [40, 52], [40, 60], [40, 70],
-            [60, 30], [60, 40], [60, 48], [60, 52], [60, 56],
-            [60, 64], [60, 68], [60, 72], [60, 80], [60, 90]
-        ]
-
-        var means_h6_three_one = [
-            [40, 10], [40, 20], [40, 28], [40, 32], [40, 36],
-            [40, 44], [40, 48], [40, 52], [40, 60], [40, 70],
-            [60, 30], [60, 40], [60, 48], [60, 52], [60, 56],
-            [60, 64], [60, 68], [60, 72], [60, 80], [60, 90]
-        ]
+        forced_22 = jsPsych.randomization.shuffle(forced_22)
+        forced_31 = jsPsych.randomization.shuffle(forced_31)
+        colors = jsPsych.randomization.shuffle(colors)
+        means = jsPsych.randomization.shuffle(means)
 
         for (var i = 0; i < 20; i++) {
-            game_h1_two_two = {
+            game_h1_22 = {
                 type: "horizons-task",
                 horizon: 5,
-                colors: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
-                },
-                means: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(means_h1_two_two, 1)[0];
-                },
-                forced_choices: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_h1_two_two, 1)[0];
-                },
+                colors: colors[i],
+                means: means[i],
+                forced_choices: forced_22[i],
                 data: {test_part: "live"}
             }
 
-            game_h6_two_two = {
+            game_h6_22 = {
                 type: "horizons-task",
                 horizon: 10,
-                colors: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
-                },
-                means: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(means_h6_two_two, 1)[0];
-                },
-                forced_choices: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_h6_two_two, 1)[0];
-                },
+                colors: colors[i],
+                means: means[i],
+                forced_choices: forced_22[i],
                 data: {test_part: "live"}
             }
 
-            game_h1_three_one = {
+            game_h1_31 = {
                 type: "horizons-task",
                 horizon: 5,
-                colors: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
-                },
-                means: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(means_h1_three_one, 1)[0];
-                },
-                forced_choices: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_h1_three_one, 1)[0];
-                },
+                colors: colors[i],
+                means: means[i],
+                forced_choices: forced_31[i],
                 data: {test_part: "live"}
             }
 
-            game_h6_three_one = {
+            game_h6_31 = {
                 type: "horizons-task",
                 horizon: 10,
-                colors: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(colors, 1)[0];
-                },
-                means: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(means_h6_three_one, 1)[0];
-                },
-                forced_choices: function(){
-                    return jsPsych.randomization.sampleWithoutReplacement(forced_choices_h6_three_one, 1)[0];
-                },
+                colors: colors[i],
+                means: means[i],
+                forced_choices: forced_31[i],
                 data: {test_part: "live"}
             }
 
-            games.push(game_h1_two_two);
-            games.push(game_h6_two_two);
-            games.push(game_h1_three_one);
-            games.push(game_h6_three_one);
+            games.push(game_h1_22);
+            games.push(game_h6_22);
+            games.push(game_h1_31);
+            games.push(game_h6_31);
         }
     }
 
@@ -271,32 +204,18 @@
     timeline.push(instr2)
 
     var comprehension_check = {
-        type: 'survey-multi-choice',
-        questions: [
-            {prompt: "1. <strong>True</strong> or False: one machine will always be better on average than the other.", 
-                options: ["True", "False"], required: true, horizontal: true,}, 
-            {prompt: "2. True or <strong>False</strong>: a machine will pay out the same number of points every play.", 
-                options: ["True", "False"], required: true, horizontal: true},
-            {prompt: "3. True or <strong>False</strong>: I will be free to choose any machine during the first turn.", 
-                options: ["True", "False"], required: true, horizontal: true},
-            {prompt: "4. <strong>True</strong> or False: the number of points I earn will affect my performance bonus.", 
-                options: ["True", "False"], required: true, horizontal: true}
-        ],
-        data: {test_part: "comprehension"}
-    }
+        type: 'cloze',
+        text: '<p>Please type "True" or "False" in response to the following statements. Press the "Next" button to check your answers.</p>' 
+            + '<p>Incorrect responses will turn <font color="red">red</font> and must be changed to the correct answer and checked again before you can proceed.</p>' 
+            + '<p align = "left">1. True or False: one machine will always be better on average than the other. %True%</p>'
+            + '<p align = "left">2. True or False: a machine will pay out the same number of points every play. %False%</p>'
+            + '<p align = "left">3. True or False: I will be free to choose any machine during the first turn. %False%</p>'
+            + '<p align = "left">4. True or False: the number of points I earn will affect my performance bonus. %True%</p>',
+        check_answers: true,
+        button_text: 'Next',
+        mistake_fn: function(){}
+    };
     timeline.push(comprehension_check)
-
-    var comp = jsPsych.data.get().filter({test_part: 'comprehension'});
-    var responses = comp.select("responses")
-    if (responses != "{\"Q0\":\"True\",\"Q1\":\"False\",\"Q2\":\"False\",\"Q3\":\"True\"}") {
-        var retest = {
-            type: "html-keyboard-response",
-            stimulus: "You answered incorrectly to one or more of the questions. Press any key to retest your comprehension." + 
-                "<p>Hint: pay attention to the bolded words to help guide your answers.</p>",
-        }
-        timeline.push(retest)
-        timeline.push(comprehension_check)
-    }
 
     var begin = {
         type: "html-keyboard-response",
