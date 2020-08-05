@@ -18,23 +18,28 @@ subjects = df['Subject'].unique()
 n = len(subjects)
 blocks = df['Block'].unique()  # 1 block = 1 game
 
-choices = [0, 0, 0, 0, 0, 0]
-avg = 0
+corr_choices6 = [0, 0, 0, 0, 0, 0]
+corr_choices1 = 0
 ten = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
-# get free choices from subject s game g
-tencount = 0
-for g in range(0, 80):  # iterate through all games for the subject
-    horizon = df.loc[(df['Subject'] == subjects[0]) & (df['Block'] == blocks[g]), 'Horizon'].values
-    isten = np.array_equal(horizon, ten)
-    print(g)
-    print(isten)
-    if isten:
-        tencount += 1
-        choices_g = df.loc[(df['Subject'] == subjects[0]) & (df['Block'] == blocks[g]) & (df['Trial'] > 4), 'Choice'].values
-        choices = np.add(choices, choices_g)
-print(tencount)
-print(choices)
+for s in range(0, n):  # iterate through each subject
+    # get free choices from subject s game g
+    for g in range(0, 80):  # iterate through all games for the subject
+        horizon = df.loc[(df['Subject'] == subjects[s]) & (df['Block'] == blocks[g]), 'Horizon'].values
+        isten = np.array_equal(horizon, ten)
 
-plt.plot([1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12])
-# plt.show()
+        choices_g = df.loc[(df['Subject'] == subjects[s]) & (df['Block'] == blocks[g]) & (df['Trial'] > 4), 'Choice'].values
+
+        if isten:
+            corr_choices6 = np.add(corr_choices6, choices_g)
+        else:
+            corr_choices1 += choices_g
+
+print("H-6", corr_choices6)
+print("H-1", corr_choices1)
+
+# newList = [x / myInt for x in myList]
+avg6 = [x / ]
+
+plt.plot([1, 2, 3, 4, 5, 6], corr_choices6)
+plt.show()
