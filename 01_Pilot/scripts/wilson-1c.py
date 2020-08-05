@@ -15,22 +15,25 @@ import matplotlib.pyplot as plt
 df = pd.read_csv('../data/data.csv')
 
 subjects = df['Subject'].unique()
+n = len(subjects)
 blocks = df['Block'].unique()  # 1 block = 1 game
-
-muL = df['mu_L']
-muR = df['mu_R']
-
 
 choices = [0, 0, 0, 0, 0, 0]
 avg = 0
+ten = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
 # get free choices from subject s game g
-
-# if
-#if df.loc[(df['Subject'] == subjects[0]) & (df['Block'] == blocks[0]), 'Horizon']:
-choices_g = df.loc[(df['Subject'] == subjects[0]) & (df['Block'] == blocks[0]) & (df['Trial'] > 4), 'Choice'].values
-choices = np.add(choices, choices_g)
-# avg =
+tencount = 0
+for g in range(0, 80):  # iterate through all games for the subject
+    horizon = df.loc[(df['Subject'] == subjects[0]) & (df['Block'] == blocks[g]), 'Horizon'].values
+    isten = np.array_equal(horizon, ten)
+    print(g)
+    print(isten)
+    if isten:
+        tencount += 1
+        choices_g = df.loc[(df['Subject'] == subjects[0]) & (df['Block'] == blocks[g]) & (df['Trial'] > 4), 'Choice'].values
+        choices = np.add(choices, choices_g)
+print(tencount)
 print(choices)
 
 plt.plot([1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12])
