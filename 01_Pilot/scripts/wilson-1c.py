@@ -4,12 +4,8 @@
 # This demonstrates that participants performed at above-chance levels and improved as the game progressed
 
 import numpy as np
-import scipy as sp
 import pandas as pd
-import os
-import seaborn as sns
 import matplotlib.pyplot as plt
-import statsmodels
 
 # load full data
 df = pd.read_csv('../data/data.csv')
