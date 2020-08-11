@@ -6,40 +6,58 @@
 import numpy as np
 import scipy as sp
 import pandas as pd
-import scipy.io as io
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+import statsmodels
 
 # load full data
 df = pd.read_csv('../data/data.csv')
 
 subjects = df['Subject'].unique()
-n = len(subjects)
+n = len(subjects)  # number of subjects
 blocks = df['Block'].unique()  # 1 block = 1 game
 
-corr_choices6 = [0, 0, 0, 0, 0, 0]
-corr_choices1 = 0
 ten = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
-for s in range(0, n):  # iterate through each subject
+counter = 0
+h6games = []
+h1games = []
+
+for s in range(n):  # iterate through each subject
     # get free choices from subject s game g
-    for g in range(0, 80):  # iterate through all games for the subject
+    for g in range(80):  # iterate through all games for the subject
         horizon = df.loc[(df['Subject'] == subjects[s]) & (df['Block'] == blocks[g]), 'Horizon'].values
-        isten = np.array_equal(horizon, ten)
+        is_ten = np.array_equal(horizon, ten)  # boolean; true for games with 10 rounds
 
-        choices_g = df.loc[(df['Subject'] == subjects[s]) & (df['Block'] == blocks[g]) & (df['Trial'] > 4), 'Choice'].values
+        choices_g = df.loc[(df['Subject'] == subjects[s]) & (df['Block'] == blocks[g]) & (df['Trial'] > 4), 'Accuracy'].values
 
-        if isten:
-            corr_choices6 = np.add(corr_choices6, choices_g)
+        if is_ten:
+            h6games.append(choices_g)
         else:
-            corr_choices1 += choices_g
+            h1games.append(choices_g)
 
-print("H-6", corr_choices6)
-print("H-1", corr_choices1)
+sum6 = sum(h6games)
+sum1 = sum(h1games)
+print("H-6", sum6)
+print("H-1", sum1)
+print("length H-6", len(h6games))  # 760 games, we're counting 6 rounds from each game
+print("length H-1", len(h1games))
 
-# newList = [x / myInt for x in myList]
-avg6 = [x / ]
+avg6 = [x / (40 * n) for x in sum6]
+avg1 = [x / (40 * n) for x in sum1]
 
-plt.plot([1, 2, 3, 4, 5, 6], corr_choices6)
+correct = df.loc[(df['Horizon'] == 10) & (df['Trial'] > 4), "Accuracy"].sum()
+print("Total number correct (H-6) = ", correct)
+
+plt.plot([1], avg1, 'o-', label="Horizon 1")
+plt.plot([1, 2, 3, 4, 5, 6], avg6, 'o-', label="Horizon 6")
+
+plt.ylim(0.7, 0.9)
+plt.yticks(np.arange(0.7, 0.9, 0.05))
+plt.title("choice accuracy as a function of free-choice trial number")
+plt.xlabel("Free-choice trial number")
+plt.ylabel("fraction correct")
+
+plt.legend()
 plt.show()
