@@ -9,3 +9,9 @@ import scipy.io as io
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+fig, (equal, unequal) = plt.subplots(1, 2)
+fig.suptitle('Horizontally stacked subplots')
+equal.title("equal information")
+equal.plot(xxxx, yyy)
+unequal.plot(xxxx, yyy)
