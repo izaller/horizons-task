@@ -46,11 +46,12 @@ avg1 = [x / (40 * n) for x in sum1]
 correct = df.loc[(df['Horizon'] == 10) & (df['Trial'] > 4), "Accuracy"].sum()
 print("Total number correct (H-6) = ", correct)
 
+fig = plt.figure(figsize=(8, 4))
 plt.plot([1], avg1, 'o-', label="Horizon 1")
 plt.plot([1, 2, 3, 4, 5, 6], avg6, 'o-', label="Horizon 6")
 
 plt.ylim(0.7, 0.9)
-plt.yticks(np.arange(0.7, 0.9, 0.05))
+plt.yticks(np.arange(0.65, 0.9, 0.05))
 plt.title("choice accuracy as a function of free-choice trial number")
 plt.xlabel("Free-choice trial number")
 plt.ylabel("fraction correct")
