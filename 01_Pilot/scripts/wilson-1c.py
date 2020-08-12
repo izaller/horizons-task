@@ -16,7 +16,6 @@ blocks = df['Block'].unique()  # 1 block = 1 game
 
 ten = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
-counter = 0
 h6games = []
 h1games = []
 
