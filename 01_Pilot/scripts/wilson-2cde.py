@@ -27,11 +27,6 @@ eq_h6 = 1 - eq.loc[eq['Horizon'] == 10].filter(['Accuracy']).mean().values[0]
 uneq_h1 = 1 - uneq.loc[uneq['Horizon'] == 5].filter(['Accuracy']).mean().values[0]  # fraction of times low info bandit was chosen
 uneq_h6 = 1 - uneq.loc[uneq['Horizon'] == 10].filter(['Accuracy']).mean().values[0]
 
-print(eq_h1)
-print(eq_h6)
-print(uneq_h1)
-print(uneq_h6)
-
 
 # x-axis: horizon length (1 vs. 6)
 # y-axis: fraction of times the lower information/value bandit was chosen
