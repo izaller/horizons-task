@@ -34,16 +34,11 @@ for s in range(n):  # iterate through each subject
 
 sum6 = sum(h6games)
 sum1 = sum(h1games)
-print("H-6", sum6)
-print("H-1", sum1)
-print("length H-6", len(h6games))  # 760 games, we're counting 6 rounds from each game
-print("length H-1", len(h1games))
 
 avg6 = [x / (40 * n) for x in sum6]
 avg1 = [x / (40 * n) for x in sum1]
 
 correct = df.loc[(df['Horizon'] == 10) & (df['Trial'] > 4), "Accuracy"].sum()
-print("Total number correct (H-6) = ", correct)
 
 fig = plt.figure(figsize=(8, 4))
 plt.plot([1], avg1, 'o-', label="Horizon 1")
