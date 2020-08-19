@@ -40,6 +40,11 @@
   };
   window.addEventListener("beforeunload", verify_unload);
 
+  // Add version metadata.
+  jsPsych.data.addProperties({
+    task_version: '0.2',
+  });
+
   // Define global variables.
   var low_quality = false;
 
