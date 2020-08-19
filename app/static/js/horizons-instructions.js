@@ -162,3 +162,14 @@ var READY_02 = {
     pass_message('starting block 2');
   }
 }
+
+// Define finish screen.
+var FINISHED = {
+  type: 'pit-instructions',
+  pages: [
+    "Great job! You've finished the task.",
+  ],
+  show_clickable_nav: true,
+  button_label_previous: "Prev",
+  button_label_next: "Next",
+}
