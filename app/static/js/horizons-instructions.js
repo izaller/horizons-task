@@ -61,7 +61,8 @@ var PRACTICE_H5 = {
   horizon: 5,
   colors: ["orange", "lightblue"],
   means: [40, 20],
-  forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+  forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow'],
+  data: {phase: "practice"}
 }
 
 var PRACTICE_H10 = {
@@ -69,7 +70,8 @@ var PRACTICE_H10 = {
   horizon: 10,
   colors: ["lightblue", "orange"],
   means: [60, 70],
-  forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+  forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow'],
+  data: {phase: "practice"}
 }
 
 // Instructions (part 02)
@@ -129,7 +131,7 @@ var READY_01 = {
   type: 'instructions',
   pages: [
     "Great job! You've passed the comprehension check.",
-    "Get ready to begin <b>Block 1/2</b>. It will take ~X minutes.<br>Press next when you're ready to start.",
+    "Get ready to begin <b>Block 1/2</b>. It will take ~6 minutes.<br>Press next when you're ready to start.",
   ],
   show_clickable_nav: true,
   button_label_previous: "Prev",
@@ -143,7 +145,7 @@ var READY_02 = {
   type: 'instructions',
   pages: [
     "Take a break for a few moments and press any button when you are ready to continue.",
-    "Get ready to begin <b>Block 2/2</b>. It will take ~X minutes.<br>Press next when you're ready to start.",
+    "Get ready to begin <b>Block 2/2</b>. It will take ~6 minutes.<br>Press next when you're ready to start.",
   ],
   show_clickable_nav: true,
   button_label_previous: "Prev",
