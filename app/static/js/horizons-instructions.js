@@ -4,7 +4,7 @@
 
 // Define comprehension threshold.
 var max_errors = 0;
-var max_loops = 2;
+var max_loops = 3;
 var num_loops = 0;
 
 //------------------------------------//
@@ -61,7 +61,8 @@ var PRACTICE_H5 = {
   horizon: 5,
   colors: ["orange", "lightblue"],
   means: [40, 20],
-  forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+  forced_choices: ['rightarrow', 'leftarrow', 'rightarrow', 'rightarrow'],
+  data: {phase: "practice"}
 }
 
 var PRACTICE_H10 = {
@@ -69,7 +70,8 @@ var PRACTICE_H10 = {
   horizon: 10,
   colors: ["lightblue", "orange"],
   means: [60, 70],
-  forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow']
+  forced_choices: ['leftarrow', 'leftarrow', 'rightarrow', 'rightarrow'],
+  data: {phase: "practice"}
 }
 
 // Instructions (part 02)
@@ -118,6 +120,14 @@ var INSTRUCTIONS = {
       return false;
     }
 
+  }
+}
+
+var COMPREHENSION_CHECK = {
+  type: 'call-function',
+  func: function(){},
+  on_finish: function(trial) {
+    if (low_quality) { jsPsych.endExperiment(); }
   }
 }
 
