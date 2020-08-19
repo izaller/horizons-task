@@ -18,6 +18,7 @@
   <script src="../static/js/jspsych-horizons-task.js"></script>
   <script src="../static/js/jspsych-horizons-comprehension.js"></script>
   <script src="../static/lib/jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="../static/lib/jspsych-6.1.0/plugins/jspsych-call-function.js"></script>
 
   <!-- Load CSS styles -->
   <link href="../static/lib/jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
@@ -41,6 +42,7 @@
   // Define timeline.
   var timeline = [];
   timeline = timeline.concat(INSTRUCTIONS);           // Instructions loop
+  timeline = timeline.concat(COMPREHENSION_CHECK);    // Comprehension check (implicit)
   timeline = timeline.concat(READY_01);               // Ready check
   timeline = timeline.concat(HORIZONS.slice(0,40));   // Horizons task
   timeline = timeline.concat(READY_02);               // Ready check

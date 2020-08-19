@@ -4,7 +4,7 @@
 
 // Define comprehension threshold.
 var max_errors = 0;
-var max_loops = 2;
+var max_loops = 3;
 var num_loops = 0;
 
 //------------------------------------//
@@ -120,6 +120,14 @@ var INSTRUCTIONS = {
       return false;
     }
 
+  }
+}
+
+var COMPREHENSION_CHECK = {
+  type: 'call-function',
+  func: function(){},
+  on_finish: function(trial) {
+    if (low_quality) { jsPsych.endExperiment(); }
   }
 }
 
