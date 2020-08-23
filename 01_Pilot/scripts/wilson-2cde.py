@@ -32,11 +32,11 @@ uneq_h6 = 1 - uneq.loc[uneq['Horizon'] == 10].filter(['Accuracy']).mean().values
 # y-axis: fraction of times the lower information/value bandit was chosen
 fig, (unequal, equal) = plt.subplots(1, 2, figsize=(8, 4))
 
-equal.set(title="Fraction of lower-value choices\nmade in round 5 by horizon", xlabel="Horizon length",
+equal.set(title="Fraction of lower-value choices\nmade in round 5 in [3,1] games", xlabel="Horizon length",
           ylabel="Fraction of lower-value choices\nmade in round 5", ylim=(0, 0.4))
 equal.bar([1, 2], [eq_h1, eq_h6], tick_label=["1", "6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
 
-unequal.set(title="Fraction of lower-information choices\nmade in round 5 by horizon", xlabel="Horizon length",
+unequal.set(title="Fraction of lower-information choices\nmade in round 5 in [2,2] games", xlabel="Horizon length",
             ylabel="Fraction of lower-information choices\nmade in round 5", ylim=(0, 0.4))
 unequal.bar([1, 2], [uneq_h1, uneq_h6], tick_label=["1", "6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
 
