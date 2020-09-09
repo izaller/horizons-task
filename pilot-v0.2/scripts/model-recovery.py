@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 df = pd.read_csv('../data/data.csv')
 
@@ -14,7 +12,7 @@ def inv_logit(arr):
 
 # function for getting log likelihoods for H=1
 # only care about 5th round ***2a/b***
-def model_likelihood_1(params, subject):
+def recovery_1(params, subject):
     alpha, side, sigma = params
     ll_h1 = 0
 
@@ -34,10 +32,13 @@ def model_likelihood_1(params, subject):
         # Compute choice probability.
         theta = inv_logit(dEV)
 
+        # # To simulate arbitrary data, pass theta (predicted choice) into the bernoulli!
+        y_hat = np.random.binomial(1, theta)
+
         # Compute likelihood of observation.
         y = 0  # TODO: what does this mean?? (y = 0 vs 1)
 
-        ll = np.log(theta * y + (1 - theta) * (1 - y))
+        ll = np.log(theta * y_hat + (1 - theta) * (1 - y_hat))
 
         # sum ll by horizon
         if rounds == 5:
@@ -49,7 +50,7 @@ def model_likelihood_1(params, subject):
 
 # function for getting log likelihoods for H=1
 # only care about 5th round ***2a/b***
-def model_likelihood_6(params, subject):
+def recovery_6(params, subject):
     alpha, side, sigma = params
     ll_h6 = 0
 
@@ -69,10 +70,10 @@ def model_likelihood_6(params, subject):
         # Compute choice probability.
         theta = inv_logit(dEV)
 
-        # Compute likelihood of observation.
-        y = 0  # TODO: what does this mean?? (y = 0 vs 1)
+        # # To simulate arbitrary data, pass theta (predicted choice) into the bernoulli!
+        y_hat = np.random.binomial(1, theta)
 
-        ll = np.log(theta * y + (1 - theta) * (1 - y))
+        ll = np.log(theta * y_hat + (1 - theta) * (1 - y_hat))
 
         # sum ll by horizon
         if rounds == 10:
@@ -82,12 +83,10 @@ def model_likelihood_6(params, subject):
     return -ll_h6
 
 
-parameters = np.array([1, 1, 1])
-
+parameters = np.array([2, 2, 2])
 subjects = df['Subject'].unique()
-print(minimize(model_likelihood_1, parameters, args=subjects[0]))
-print(minimize(model_likelihood_6, parameters, args=subjects[0]))
 
+for s in subjects:
+    print(minimize(recovery_1, parameters, args=s))
+    print(minimize(recovery_6, parameters, args=s))
 
-# for s in subjects:
-#     print(minimize(model_likelihood_1, parameters, args=s))
