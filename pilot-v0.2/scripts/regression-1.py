@@ -1,15 +1,30 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
+from scipy.stats import zscore
+import csv
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 df = pd.read_csv('../data/data.csv')
+reject = pd.read_csv('../data/reject.csv')
 
 
 # function for taking inverse log
 def inv_logit(arr):
     return 1. / (1 + np.exp(-arr))
+
+
+def adjust_info(info):
+    if info == -1:
+        info = 0  # fix right more informative case (info = -1 --> 0)
+    return info
+
+
+def loglik(y, theta):
+    return np.log(theta * y + (1 - theta) * (1 - y) + 1e-9)
 
 
 # function for getting log likelihoods for H=1
@@ -18,30 +33,23 @@ def model_1_eq(params, subject):
     alpha, side, sigma = params
     ll = 0
 
-    # Do some fancy stuff to compute trial-by-trial likelihoods
-    for i in range(1, 81):
-        line = df.loc[(df['Subject'] == subject) & (df['Block'] == i) & (df['Trial'] == 5)]  # grab line from data
-        rounds = line.filter(items=['Horizon']).to_numpy()[0][0]
-        if rounds == 10:  # only want H=1
-            continue
-        info = line.filter(items=['Info']).to_numpy()[0][0]  # need to convert from (-1, 0, 1) to (0, 1)
-        if info != 0:  # only want equal condition
-            continue
-        delta = line.filter(items=['delta']).to_numpy()[0][0]
+    data = df.query('Subject == @subject and Horizon == 5 and Info == 0 and Trial == 5').reset_index(drop=True)
+    zdeltas = zscore(data['delta'])
+    info = data['Info']
+    choice = data['Choice']
+
+    for i in range(20):
 
         # Compute difference in expected value.
-        dEV = (delta + alpha * info + side) / sigma
+        dEV = (zdeltas[i] + alpha * info[i] + side) / sigma
 
         # Compute choice probability.
         theta = inv_logit(dEV)
 
-        y = line.filter(items=['Choice']).to_numpy()[0][0]  # TODO: check if this is right
+        y = choice[i]  # TODO: check if this is right
 
-        # Compute likelihood of observation.
-        loglik = np.log(theta * y + (1 - theta) * (1 - y))
-
-        # sum ll by horizon
-        ll += loglik
+        # compute and sum ll
+        ll += loglik(y, theta)
 
     # Return overall (sum) likelihood
     return -ll
@@ -53,30 +61,23 @@ def model_6_eq(params, subject):
     alpha, side, sigma = params
     ll = 0
 
-    # Do some fancy stuff to compute trial-by-trial likelihoods
-    for i in range(1, 81):
-        line = df.loc[(df['Subject'] == subject) & (df['Block'] == i) & (df['Trial'] == 5)]  # grab line from data
-        rounds = line.filter(items=['Horizon']).to_numpy()[0][0]
-        if rounds == 5:  # only want H=6
-            continue
-        info = line.filter(items=['Info']).to_numpy()[0][0]  # need to convert from (-1, 0, 1) to (0, 1)
-        if info != 0:  # only want equal condition
-            continue
-        delta = line.filter(items=['delta']).to_numpy()[0][0]
+    data = df.query('Subject == @subject and Horizon == 10 and Info == 0 and Trial == 5').reset_index(drop=True)
+    zdeltas = zscore(data['delta'])
+    info = data['Info']
+    choice = data['Choice']
+
+    for i in range(20):
 
         # Compute difference in expected value.
-        dEV = (delta + alpha * info + side) / sigma
+        dEV = (zdeltas[i] + alpha * info[i] + side) / sigma
 
         # Compute choice probability.
         theta = inv_logit(dEV)
 
-        y = line.filter(items=['Choice']).to_numpy()[0][0]  # TODO: check if this is right
+        y = choice[i]  # TODO: check if this is right
 
-        # Compute likelihood of observation.
-        loglik = np.log(theta * y + (1 - theta) * (1 - y))
-
-        # sum ll by horizon
-        ll += loglik
+        # compute and sum ll
+        ll += loglik(y, theta)
 
     # Return overall (sum) likelihood
     return -ll
@@ -88,32 +89,24 @@ def model_1_uneq(params, subject):
     alpha, side, sigma = params
     ll = 0
 
-    # Do some fancy stuff to compute trial-by-trial likelihoods
-    for i in range(1, 81):
-        line = df.loc[(df['Subject'] == subject) & (df['Block'] == i) & (df['Trial'] == 5)]  # grab line from data
-        rounds = line.filter(items=['Horizon']).to_numpy()[0][0]
-        if rounds == 10:  # only want H=1
-            continue
-        info = line.filter(items=['Info']).to_numpy()[0][0]  # need to convert from (-1, 0, 1) to (0, 1)
-        if info == 0:  # only want unequal condition
-            continue
-        if info == -1:
-            info = 0  # fix right more informative case (info = -1 --> 0)
-        delta = line.filter(items=['delta']).to_numpy()[0][0]
+    data = df.query('Subject == @subject and Horizon == 5 and Info != 0 and Trial == 5').reset_index(drop=True)
+    zdeltas = zscore(data['delta'])
+    info = data['Info']
+    info = [adjust_info(i) for i in info]
+    choice = data['Choice']
+
+    for i in range(20):
 
         # Compute difference in expected value.
-        dEV = (delta + alpha * info + side) / sigma
+        dEV = (zdeltas[i] + alpha * info[i] + side) / sigma
 
         # Compute choice probability.
         theta = inv_logit(dEV)
 
-        y = line.filter(items=['Choice']).to_numpy()[0][0]  # TODO: check if this is right
+        y = choice[i]  # TODO: check if this is right
 
-        # Compute likelihood of observation.
-        loglik = np.log(theta * y + (1 - theta) * (1 - y))
-
-        # sum ll by horizon
-        ll += loglik
+        # compute and sum ll
+        ll += loglik(y, theta)
 
     # Return overall (sum) likelihood
     return -ll
@@ -125,43 +118,49 @@ def model_6_uneq(params, subject):
     alpha, side, sigma = params
     ll = 0
 
-    # Do some fancy stuff to compute trial-by-trial likelihoods
-    for i in range(1, 81):
-        line = df.loc[(df['Subject'] == subject) & (df['Block'] == i) & (df['Trial'] == 5)]  # grab line from data
-        rounds = line.filter(items=['Horizon']).to_numpy()[0][0]
-        if rounds == 5:  # only want H=6
-            continue
-        info = line.filter(items=['Info']).to_numpy()[0][0]  # need to convert from (-1, 0, 1) to (0, 1)
-        if info != 0:  # only want equal condition
-            continue
-        if info == -1:
-            info = 0  # fix right more informative case (info = -1 --> 0)
-        delta = line.filter(items=['delta']).to_numpy()[0][0]
+    data = df.query('Subject == @subject and Horizon == 10 and Info != 0 and Trial == 5').reset_index(drop=True)
+    zdeltas = zscore(data['delta'])
+    info = data['Info']
+    info = [adjust_info(i) for i in info]
+    choice = data['Choice']
+
+    for i in range(20):
 
         # Compute difference in expected value.
-        dEV = (delta + alpha * info + side) / sigma
+        dEV = (zdeltas[i] + alpha * info[i] + side) / sigma
 
         # Compute choice probability.
         theta = inv_logit(dEV)
 
-        y = line.filter(items=['Choice']).to_numpy()[0][0]  # TODO: check if this is right
+        y = choice[i]
 
-        # Compute likelihood of observation.
-        loglik = np.log(theta * y + (1 - theta) * (1 - y))
-
-        # sum ll by horizon
-        ll += loglik
+        # compute and sum ll
+        ll += loglik(y, theta)
 
     # Return overall (sum) likelihood
     return -ll
 
 
-parameters = np.array([1, 1, 10])
-subjects = df['Subject'].unique()
-print(minimize(model_1_eq, parameters, args=subjects[0]))
-print(minimize(model_6_eq, parameters, args=subjects[0]))
-print(minimize(model_1_uneq, parameters, args=subjects[0]))
-print(minimize(model_6_uneq, parameters, args=subjects[0]))
+# params = alpha, side, sigma
+parameters = np.array([15, 0, 5])
+subjects = df['Subject'].unique().tolist()
+n = len(subjects)
+rejects = reject.query('Reject == 1')['Subject'].tolist()
 
-# for s in subjects:
-#     print(minimize(model_likelihood_1, parameters, args=s))
+with open('../figures,params/params.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Subject', 'type', 'alpha', 'side', 'sigma'])
+    bounds = ([-20,20],[-10,10],[1e-9,None])  # alpha, side, sigma
+
+    for i in range(n):
+        if subjects[i] in rejects:
+            continue
+        s = subjects[i]
+
+        row1 = [s, 1] + minimize(model_1_eq, parameters, args=s, bounds=bounds).x.tolist()  # type 1
+        row2 = [s, 2] + minimize(model_6_eq, parameters, args=s, bounds=bounds).x.tolist()  # type 2
+        row3 = [s, 3] + minimize(model_1_uneq, parameters, args=s, bounds=bounds).x.tolist()  # type 3
+        row4 = [s, 4] + minimize(model_6_uneq, parameters, args=s, bounds=bounds).x.tolist()  # type 4
+
+        rows = [row1, row2, row3, row4]
+        writer.writerows(rows)

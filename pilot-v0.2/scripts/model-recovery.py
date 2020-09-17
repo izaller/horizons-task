@@ -4,7 +4,6 @@ from scipy.optimize import minimize
 
 df = pd.read_csv('../data/data.csv')
 
-
 # function for taking inverse log
 def inv_logit(arr):
     return 1. / (1 + np.exp(-arr))
@@ -87,6 +86,6 @@ parameters = np.array([2, 2, 2])
 subjects = df['Subject'].unique()
 
 for s in subjects:
-    print(minimize(recovery_1, parameters, args=s))
-    print(minimize(recovery_6, parameters, args=s))
+    print(minimize(recovery_1, parameters, args=s).x)
+    print(minimize(recovery_6, parameters, args=s).x)
 
