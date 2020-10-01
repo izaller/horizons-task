@@ -4,9 +4,6 @@ from scipy.optimize import minimize
 from scipy.stats import zscore
 import csv
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 
 df = pd.read_csv('../data/data.csv')
 reject = pd.read_csv('../data/reject.csv')
@@ -18,10 +15,11 @@ def inv_logit(arr):
 
 
 # Info: 0 = [2,2] trial, 1 = [3,1] trial, -1 = [1,3] trial
-def adjust_info(info):
-    if info == -1:
-        info = 0  # fix right more informative case (info = -1 --> 0)
-    return info
+def adjust_delta(deltas, info):
+    for i in range(len(deltas)):
+        if info[i] == -1:
+            deltas[i] = -deltas[i]
+    return deltas
 
 
 def loglik(y, theta):
@@ -155,11 +153,11 @@ def model_1(params, subject, zscored=True):
     ll = 0
 
     data = df.query('Subject == @subject and Horizon == 5 and Trial == 5').reset_index(drop=True)
-    deltas = data['delta']
+    deltas = data['delta'].copy()
+    info = data['Info']
+    deltas = adjust_delta(deltas, info)
     if zscored:
         deltas = zscore(deltas)
-    info = data['Info']
-    #info = [adjust_info(i) for i in info]  # TODO need to adjust data by
     choice = data['Choice']
 
     for i in range(40):
@@ -183,11 +181,11 @@ def model_6(params, subject, zscored=True):
     ll = 0
 
     data = df.query('Subject == @subject and Horizon == 10 and Trial == 5').reset_index(drop=True)
-    deltas = data['delta']
+    deltas = data['delta'].copy()  # TODO need to fix deltas for info = -1 case
+    info = data['Info']
+    deltas = adjust_delta(deltas, info)
     if zscored:
         deltas = zscore(deltas)
-    info = data['Info']
-    #info = [adjust_info(i) for i in info]
     choice = data['Choice']
 
     for i in range(40):
@@ -241,8 +239,9 @@ def run_by_horizon(filename, zscored=True):
 
     with open('../figures,params/' + filename, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])
-        bounds = ([-20, 20], [-10, 10], [1e-9, None])  # alpha, side, sigma
+        writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])  #
+        # TODO sigma needs to be negative sigma
+        bounds = ([-20, 20], [-20, 20], [1e-9, None])  # alpha, side, sigma
 
         for i in range(n):
             if subjects[i] in rejects:
@@ -257,5 +256,11 @@ def run_by_horizon(filename, zscored=True):
 
 
 run_by_horizon('params_by_horizon.csv', zscored=False)
+# run_by_horizon('params_by_horizon_zscored.csv', zscored=True)
 
-# TODO check adjusting info??
+
+# deltas = df['delta']  # TODO need to fix deltas for info = -1 case
+# info = df['Info']
+# # print(info)
+# print(deltas)
+# TODO check adjusting deltas by info

@@ -1,10 +1,10 @@
 # plot parameters by subject
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 # load desired data
-df = pd.read_csv('../figures,params/params_by_horizon.csv')
 anxiety = pd.read_csv('../data/surveys.csv').copy()
 reject = pd.read_csv('../data/reject.csv')
 
@@ -79,7 +79,8 @@ def adjust_pswq(row):
     return row
 
 
-def plot_params_pswq():
+def plot_params_pswq(filename):
+    df = pd.read_csv(filename)
     subjects = anxiety['Subject']
     rejects = reject.query('Reject == 1')['Subject'].tolist()
     data = {}
@@ -121,10 +122,24 @@ def plot_params_pswq():
         # # add sum and params to dict
         # data[subjects[s]] = [pswq_sum, params_h1, params_h6]
 
+    # TODO : this shit
+    # TODO correlate the data and plot correlations
+    # TODO np.corrcoef(x, y)
+
     fig = plt.figure(figsize=(8, 4))
-    plt.plot(alphas_h1, pswq_sums, 'o', label='Horizon 1')
-    plt.plot(alphas_h6, pswq_sums, 'o', label='Horizon 6')
-    # fig.plt(, label='Horizon 6')
+    plt.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
+    z1 = np.polyfit(pswq_sums, alphas_h1, 1)
+    p1 = np.poly1d(z1)
+    plt.plot(pswq_sums, p1(pswq_sums), "-", color='blue')
+    plt.plot(pswq_sums, alphas_h6, 'o', color='orange', label='Horizon 6')
+    z2 = np.polyfit(pswq_sums, alphas_h6, 1)
+    p2 = np.poly1d(z2)
+    plt.plot(pswq_sums, p2(pswq_sums), "-", color='orange')
+    plt.legend()
+    plt.tight_layout()
     plt.show()
 
-plot_params_pswq()
+
+# plot_params_pswq('../figures,params/params_by_horizon_zscored.csv')
+plot_params_pswq('../figures,params/params_by_horizon.csv')
+
