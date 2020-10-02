@@ -30,7 +30,6 @@ def plot_hist(filename):
 # adjust scores for Penn State Worry Questionnaire
 # reverse score for PSWQ 1, 3, 8, 10, 11
 # 5 --> 1, 4 --> 2, 3 --> 3, 2 --> 4, 1 --> 5
-# TODO make this a lot faster
 def adjust_pswq(row):
     for i in range(len(row)):
         if i in [0, 2, 7, 9, 10]:
@@ -80,29 +79,32 @@ def plot_alpha_pswq(filename, title, figname):
         sides_h6.append(query_6['side'].tolist()[0])
         sigmas_h6.append(query_6['sigma'].tolist()[0])
 
-
-    fig = plt.figure(figsize=(8, 4))
-    plt.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
+    fig, (alpha, side, sigma) = plt.subplots(1, 2, figsize=(8, 4))
+    alpha.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
     z1 = np.polyfit(pswq_sums, alphas_h1, 1)
     p1 = np.poly1d(z1)
-    plt.plot(pswq_sums, p1(pswq_sums), "-", color='blue')
-    plt.plot(pswq_sums, alphas_h6, 'o', color='orange', label='Horizon 6')
+    alpha.plot(pswq_sums, p1(pswq_sums), "-", color='blue')
+    alpha.plot(pswq_sums, alphas_h6, 'o', color='orange', label='Horizon 6')
     z2 = np.polyfit(pswq_sums, alphas_h6, 1)
     p2 = np.poly1d(z2)
-    plt.plot(pswq_sums, p2(pswq_sums), "-", color='orange')
+    alpha.plot(pswq_sums, p2(pswq_sums), "-", color='orange')
 
-    plt.title(title)
-    plt.xlabel('Sum PSWQ')
-    plt.ylabel('alpha (information parameter)')
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig('../figures,params/' + figname)
+    alpha.title(title)
+    alpha.xlabel('Sum PSWQ')
+    alpha.ylabel('alpha (information parameter)')
+    alpha.legend()
+    alpha.tight_layout()
+    alpha.savefig('../figures,params/' + figname)
 
 
-plot_alpha_pswq('../figures,params/params_by_horizon_zscored.csv',
-                'Plot of anxiety scores vs alpha (information) parameters (z scored, bounded on +-10)',
-                'params_by_horizon_zscored.png')
-plot_alpha_pswq('../figures,params/params_by_horizon.csv',
-                'Plot of anxiety scores vs alpha (information) parameters (bounded on +-20)',
-                'params_by_horizon.png')
+def main():
+    plot_alpha_pswq('../figures,params/params_by_horizon_zscored.csv',
+                    'Plot of anxiety scores vs alpha (information) parameters (z scored, bounded on +-10)',
+                    'params_by_horizon_zscored.png')
+    plot_alpha_pswq('../figures,params/params_by_horizon.csv',
+                    'Plot of anxiety scores vs alpha (information) parameters (bounded on +-20)',
+                    'params_by_horizon.png')
 
+
+if __name__ == '__main__':
+    main()
