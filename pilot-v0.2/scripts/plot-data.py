@@ -49,7 +49,6 @@ def plot_alpha_pswq(filename, title, figname):
     df = pd.read_csv(filename)
     subjects = anxiety['Subject']
     rejects = reject.query('Reject == 1')['Subject'].tolist()
-    data = {}
     pswq_sums = []
 
     alphas_h1 = []
@@ -70,20 +69,17 @@ def plot_alpha_pswq(filename, title, figname):
         row = anxiety.iloc[s, 6:23]
         row = adjust_pswq(row)
         # sum anxiety scores for the subject
-        print(s)
         pswq_sums.append(sum(row))
         # get function parameters from subject
         query_1 = df.query('Subject == @sub and Horizon == 1')
         alphas_h1.append(query_1['alpha'].tolist()[0])
         sides_h1.append(query_1['side'].tolist()[0])
         sigmas_h1.append(query_1['sigma'].tolist()[0])
-        print(alphas_h1)
-        # params_h1 = [query_1['alpha'].tolist()[0], query_1['side'].tolist()[0], query_1['sigma'].tolist()[0]]
         query_6 = df.query('Subject == @sub and Horizon == 6')
-        # params_h6 = [query_6['alpha'].tolist()[0], query_6['side'].tolist()[0], query_6['sigma'].tolist()[0]]
         alphas_h6.append(query_6['alpha'].tolist()[0])
         sides_h6.append(query_6['side'].tolist()[0])
         sigmas_h6.append(query_6['sigma'].tolist()[0])
+
 
     fig = plt.figure(figsize=(8, 4))
     plt.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
