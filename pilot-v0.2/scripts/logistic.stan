@@ -1,3 +1,5 @@
+// model choice probability vs delta
+
 data {
 
     // Metadata
@@ -5,22 +7,25 @@ data {
 
     // Data
     int        y[T];
-    vector[T]  x;
+    vector[T]  delta;
+    vector[T]  info;
 
 }
 parameters {
 
-    real  b0;
-    real  b1;
+    real  alpha;
+    real  side;
+    real  sigma;
 
 }
 model {
 
     // Priors
-    b0 ~ normal(0, 1);
-    b1 ~ normal(0, 1);
+    alpha ~ normal(0, 1);
+    side ~ normal(0, 1);
+    sigma ~ normal(5, 1);
 
     // Likelihood
-    y ~ bernoulli_logit( b0 + b1 * x );
+    y ~ bernoulli_logit((delta + alpha * info  + side) / sigma);
 
 }

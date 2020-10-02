@@ -25,9 +25,10 @@ theta = inv_logit(b0 + b1 * x)
 y = np.random.binomial(1, theta)
 
 plt.plot(x, theta, '-')
+plt.show()
 
 ## Compile model.
-StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic.stan')
+StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic-demo.stan')
 
 ## Prepare data for Stan.
 dd = dict(T=x.size, x=x, y=y)
