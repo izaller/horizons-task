@@ -1,34 +1,20 @@
 # plot parameters by subject
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 # load desired data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
 reject = pd.read_csv('../data/reject.csv')
 
+
 # function for taking inverse log
 def inv_logit(arr):
     return 1. / (1 + np.exp(-arr))
 
 
-def choice_probability(params, deltas, info):
-    alpha, side, sigma = params
-    thetas = []
-
-    for i in range():
-
-        # Compute difference in expected value.
-        dEV = (deltas[i] + alpha * info[i] + side) / sigma
-
-        # compute choice probability.
-        thetas[i] = inv_logit(dEV)
-
-    # return probability array
-    return thetas
-
-def plot_hist():
+def plot_hist(filename):
+    df = pd.read_csv(filename)
     alpha_h1 = df.query('Horizon == 1')['alpha']
     alpha_h6 = df.query('Horizon == 6')['alpha']
 
@@ -39,26 +25,6 @@ def plot_hist():
 
     h1.hist(alpha_h1, bins=20)
     h6.hist(alpha_h6, bins=20)
-
-
-# plot curve of average params
-def plot_curves():
-    alpha_h1 = df.query('Horizon == 1')['alpha'].mean()
-    side_h1 = df.query('Horizon == 1')['side'].mean()
-    sigma_h1 = df.query('Horizon == 1')['sigma'].mean()
-    mean_params_h1 = alpha_h1, side_h1, sigma_h1
-
-    alpha_h6 = df.query('Horizon == 6')['alpha'].mean()
-    side_h6 = df.query('Horizon == 6')['side'].mean()
-    sigma_h6 = df.query('Horizon == 6')['sigma'].mean()
-    mean_params_h6 = alpha_h6, side_h6, sigma_h6
-
-    deltas = np.arange(-30, 30, 1)
-    thetas = choice_probability(params, deltas)
-
-    # plot histogram of all alphas
-    fig, (h1, h6) = plt.subplots(1, 2, figsize=(16, 4))
-    h1.plot(deltas, choice_probability(mean_params_h1, deltas))
 
 
 # adjust scores for Penn State Worry Questionnaire
@@ -79,7 +45,7 @@ def adjust_pswq(row):
     return row
 
 
-def plot_params_pswq(filename):
+def plot_alpha_pswq(filename, title, figname):
     df = pd.read_csv(filename)
     subjects = anxiety['Subject']
     rejects = reject.query('Reject == 1')['Subject'].tolist()
@@ -119,13 +85,6 @@ def plot_params_pswq(filename):
         sides_h6.append(query_6['side'].tolist()[0])
         sigmas_h6.append(query_6['sigma'].tolist()[0])
 
-        # # add sum and params to dict
-        # data[subjects[s]] = [pswq_sum, params_h1, params_h6]
-
-    # TODO : this shit
-    # TODO correlate the data and plot correlations
-    # TODO np.corrcoef(x, y)
-
     fig = plt.figure(figsize=(8, 4))
     plt.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
     z1 = np.polyfit(pswq_sums, alphas_h1, 1)
@@ -135,11 +94,19 @@ def plot_params_pswq(filename):
     z2 = np.polyfit(pswq_sums, alphas_h6, 1)
     p2 = np.poly1d(z2)
     plt.plot(pswq_sums, p2(pswq_sums), "-", color='orange')
+
+    plt.title(title)
+    plt.xlabel('Sum PSWQ')
+    plt.ylabel('alpha (information parameter)')
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    plt.savefig('../figures,params/' + figname)
 
 
-# plot_params_pswq('../figures,params/params_by_horizon_zscored.csv')
-plot_params_pswq('../figures,params/params_by_horizon.csv')
+plot_alpha_pswq('../figures,params/params_by_horizon_zscored.csv',
+                'Plot of anxiety scores vs alpha (information) parameters (z scored, bounded on +-10)',
+                'params_by_horizon_zscored.png')
+plot_alpha_pswq('../figures,params/params_by_horizon.csv',
+                'Plot of anxiety scores vs alpha (information) parameters (bounded on +-20)',
+                'params_by_horizon.png')
 

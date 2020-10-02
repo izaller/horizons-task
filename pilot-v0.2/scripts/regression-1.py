@@ -240,7 +240,6 @@ def run_by_horizon(filename, zscored=True):
     with open('../figures,params/' + filename, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])  #
-        # TODO sigma needs to be negative sigma
         bounds = ([-20, 20], [-20, 20], [1e-9, None])  # alpha, side, sigma
 
         for i in range(n):
@@ -257,10 +256,3 @@ def run_by_horizon(filename, zscored=True):
 
 run_by_horizon('params_by_horizon.csv', zscored=False)
 # run_by_horizon('params_by_horizon_zscored.csv', zscored=True)
-
-
-# deltas = df['delta']  # TODO need to fix deltas for info = -1 case
-# info = df['Info']
-# # print(info)
-# print(deltas)
-# TODO check adjusting deltas by info
