@@ -240,7 +240,7 @@ def run_by_horizon(filename, zscored=True):
     with open('../figures,params/' + filename, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])  #
-        bounds = ([-20, 20], [-20, 20], [1e-9, None])  # alpha, side, sigma
+        bounds = ([-20, 20], [-20, 20], [1e-9, 20])  # alpha, side, sigma
 
         for i in range(n):
             if subjects[i] in rejects:
@@ -254,5 +254,10 @@ def run_by_horizon(filename, zscored=True):
             writer.writerows(rows)
 
 
-run_by_horizon('params_by_horizon.csv', zscored=False)
-# run_by_horizon('params_by_horizon_zscored.csv', zscored=True)
+def main():
+    run_by_horizon('params_by_horizon.csv', zscored=False)
+    run_by_horizon('params_by_horizon_zscored.csv', zscored=True)
+
+
+if __name__ == '__main__':
+    main()

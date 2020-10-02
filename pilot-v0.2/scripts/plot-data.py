@@ -27,24 +27,12 @@ def plot_hist(filename):
     h6.hist(alpha_h6, bins=20)
 
 
-# adjust scores for Penn State Worry Questionnaire
-# reverse score for PSWQ 1, 3, 8, 10, 11
-# 5 --> 1, 4 --> 2, 3 --> 3, 2 --> 4, 1 --> 5
-def adjust_pswq(row):
-    for i in range(len(row)):
-        if i in [0, 2, 7, 9, 10]:
-            if row[i] == 5:
-                row[i] = 1
-            elif row[i] == 4:
-                row[i] = 2
-            elif row[i] == 2:
-                row[i] = 4
-            elif row[i] == 1:
-                row[i] = 5
-    return row
+def best_fit_line(data, param):
+    z1 = np.polyfit(data, param, 1)
+    return np.poly1d(z1)
 
 
-def plot_alpha_pswq(filename, title, figname):
+def plot_pswq(filename, title, figname):
     df = pd.read_csv(filename)
     subjects = anxiety['Subject']
     rejects = reject.query('Reject == 1')['Subject'].tolist()
@@ -66,7 +54,6 @@ def plot_alpha_pswq(filename, title, figname):
             continue
 
         row = anxiety.iloc[s, 6:23]
-        row = adjust_pswq(row)
         # sum anxiety scores for the subject
         pswq_sums.append(sum(row))
         # get function parameters from subject
@@ -79,31 +66,45 @@ def plot_alpha_pswq(filename, title, figname):
         sides_h6.append(query_6['side'].tolist()[0])
         sigmas_h6.append(query_6['sigma'].tolist()[0])
 
-    fig, (alpha, side, sigma) = plt.subplots(1, 2, figsize=(8, 4))
+    fig, (alpha, side, sigma) = plt.subplots(1, 3, figsize=(32, 4))
     alpha.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
-    z1 = np.polyfit(pswq_sums, alphas_h1, 1)
-    p1 = np.poly1d(z1)
-    alpha.plot(pswq_sums, p1(pswq_sums), "-", color='blue')
+    fit_a1 = best_fit_line(pswq_sums, alphas_h1)
+    alpha.plot(pswq_sums, fit_a1(pswq_sums), "-", color='blue')
     alpha.plot(pswq_sums, alphas_h6, 'o', color='orange', label='Horizon 6')
-    z2 = np.polyfit(pswq_sums, alphas_h6, 1)
-    p2 = np.poly1d(z2)
-    alpha.plot(pswq_sums, p2(pswq_sums), "-", color='orange')
-
-    alpha.title(title)
-    alpha.xlabel('Sum PSWQ')
-    alpha.ylabel('alpha (information parameter)')
+    fit_a6 = best_fit_line(pswq_sums, alphas_h6)
+    alpha.plot(pswq_sums, fit_a6(pswq_sums), "-", color='orange')
+    alpha.set(title=title % 'alpha (information)', xlabel='Sum PSWQ', ylabel='alpha')
     alpha.legend()
-    alpha.tight_layout()
-    alpha.savefig('../figures,params/' + figname)
+
+    side.plot(pswq_sums, sides_h1, 'o', color='blue', label='Horizon 1')
+    fit_sides1 = best_fit_line(pswq_sums, sides_h1)
+    side.plot(pswq_sums, fit_sides1(pswq_sums), "-", color='blue')
+    side.plot(pswq_sums, sides_h6, 'o', color='orange', label='Horizon 6')
+    fit_sides6 = best_fit_line(pswq_sums, sides_h6)
+    side.plot(pswq_sums, fit_sides6(pswq_sums), "-", color='orange')
+    side.set(title=title % 'side (spatial parameter)', xlabel='Sum PSWQ', ylabel='side')
+    side.legend()
+
+    sigma.plot(pswq_sums, sigmas_h1, 'o', color='blue', label='Horizon 1')
+    fit_sigmas1 = best_fit_line(pswq_sums, sigmas_h1)
+    sigma.plot(pswq_sums, fit_sigmas1(pswq_sums), "-", color='blue')
+    sigma.plot(pswq_sums, sigmas_h6, 'o', color='orange', label='Horizon 6')
+    fit_sigmas6 = best_fit_line(pswq_sums, sigmas_h6)
+    sigma.plot(pswq_sums, fit_sigmas6(pswq_sums), "-", color='orange')
+    sigma.set(title=title % 'sigma (information noise)', xlabel='Sum PSWQ', ylabel='sigma')
+    sigma.legend()
+
+    plt.tight_layout()
+    plt.savefig('../figures,params/' + figname)
 
 
 def main():
-    plot_alpha_pswq('../figures,params/params_by_horizon_zscored.csv',
-                    'Plot of anxiety scores vs alpha (information) parameters (z scored, bounded on +-10)',
-                    'params_by_horizon_zscored.png')
-    plot_alpha_pswq('../figures,params/params_by_horizon.csv',
-                    'Plot of anxiety scores vs alpha (information) parameters (bounded on +-20)',
-                    'params_by_horizon.png')
+    plot_pswq('../figures,params/params_by_horizon_zscored.csv',
+              'Plot of anxiety scores\n vs %s parameters\n(z scored)',
+              'params_by_horizon_zscored.png')
+    plot_pswq('../figures,params/params_by_horizon.csv',
+              'Plot of anxiety scores\n vs %s parameters',
+              'params_by_horizon.png')
 
 
 if __name__ == '__main__':

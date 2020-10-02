@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from stantools.io import load_model
 import pandas as pd
 import seaborn as sns
+import csv
 
 sns.set_style('white')
 
@@ -40,18 +41,22 @@ def getData(subject, horizon):
 
 
 def model_h1(StanModel):
+    data = []
     subjects = df['Subject'].unique()
-
     for subject in subjects:
         # get prepared data for Stan.
         dd = getData(subject, 5)
 
         # Fit model.
         StanFit = StanModel.optimizing(data=dd, seed=0)
-        print(StanFit)
+        fit = (StanFit['alpha'], StanFit['side'], StanFit['sigma'])
+        data.append(fit)
+
+    return data
 
 
 def model_h6(StanModel):
+    data = []
     subjects = df['Subject'].unique()
     for subject in subjects:
         # get prepared data for Stan.
@@ -59,16 +64,41 @@ def model_h6(StanModel):
 
         # Fit model.
         StanFit = StanModel.optimizing(data=dd, seed=0)
-        # write to output to csv
-        print(StanFit.param_names)
+        fit = (StanFit['alpha'], StanFit['side'], StanFit['sigma'])
+        data.append(fit)
+
+    return data
+
+
+def writeData(params_h1, params_h6, filename):
+    subjects = df['Subject'].unique()
+    rejects = reject.query('Reject == 1')['Subject'].tolist()
+    n = len(subjects)
+
+    with open('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/figures,params/' + filename,
+              'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])
+
+        for i in range(n):
+            if subjects[i] in rejects:
+                continue
+            s = subjects[i]
+
+            row1 = [s, 1] + params_h1[i]
+            row2 = [s, 6] + params_h6[i]
+
+            rows = [row1, row2]
+            writer.writerows(rows)
 
 
 def main():
     # Compile model.
     StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic.stan')
 
-    model_h1(StanModel)
-    # model_h6(StanModel)
+    params_h1 = model_h1(StanModel)
+    params_h6 = model_h6(StanModel)
+    writeData(params_h1, params_h6, 'params_stan.csv')
 
 
 if __name__ == '__main__':
