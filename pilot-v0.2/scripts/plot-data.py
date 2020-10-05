@@ -105,6 +105,9 @@ def main():
     plot_pswq('../figures,params/params_by_horizon.csv',
               'Plot of anxiety scores\n vs %s parameters',
               'params_by_horizon.png')
+    plot_pswq('../figures,params/params_stan.csv',
+              'Plot of anxiety scores\n vs %s parameters',
+              'params_stan.png')
 
 
 if __name__ == '__main__':

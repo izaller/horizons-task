@@ -84,9 +84,8 @@ def writeData(params_h1, params_h6, filename):
             if subjects[i] in rejects:
                 continue
             s = subjects[i]
-
-            row1 = [s, 1] + params_h1[i]
-            row2 = [s, 6] + params_h6[i]
+            row1 = [s, 1, params_h1[i][0], params_h1[i][1], params_h1[i][2]]
+            row2 = [s, 6, params_h6[i][0], params_h6[i][1], params_h6[i][2]]
 
             rows = [row1, row2]
             writer.writerows(rows)
@@ -94,7 +93,7 @@ def writeData(params_h1, params_h6, filename):
 
 def main():
     # Compile model.
-    StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic.stan')
+    StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic.pkl')
 
     params_h1 = model_h1(StanModel)
     params_h6 = model_h6(StanModel)
