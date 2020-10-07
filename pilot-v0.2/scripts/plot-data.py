@@ -3,16 +3,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# load desired data
+# load global data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
 reject = pd.read_csv('../data/reject.csv')
 subjects = anxiety['Subject']
 rejects = reject.query('Reject == 1')['Subject'].tolist()
-
-
-# function for taking inverse log
-def inv_logit(arr):
-    return 1. / (1 + np.exp(-arr))
 
 
 def plot_alpha_hist(filename, figname):
