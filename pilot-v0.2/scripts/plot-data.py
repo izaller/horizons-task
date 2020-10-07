@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 # load desired data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
 reject = pd.read_csv('../data/reject.csv')
+subjects = anxiety['Subject']
+rejects = reject.query('Reject == 1')['Subject'].tolist()
 
 
 # function for taking inverse log
@@ -13,18 +15,19 @@ def inv_logit(arr):
     return 1. / (1 + np.exp(-arr))
 
 
-def plot_hist(filename):
+def plot_alpha_hist(filename, figname):
     df = pd.read_csv(filename)
     alpha_h1 = df.query('Horizon == 1')['alpha']
     alpha_h6 = df.query('Horizon == 6')['alpha']
 
     # plot histogram of all alphas
     fig, (h1, h6) = plt.subplots(1, 2, figsize=(16, 4))
-    h1.set(title='alpha param H1', xlabel='alpha values')
-    h6.set(title='alpha param H6', xlabel='alpha values')
+    h1.set(title='Information Parameter H1', xlabel='alpha parameter')
+    h6.set(title='Information Parameter H6', xlabel='alpha parameter')
 
-    h1.hist(alpha_h1, bins=20)
-    h6.hist(alpha_h6, bins=20)
+    h1.hist(alpha_h1, bins=20, edgecolor='black', linewidth=1)
+    h6.hist(alpha_h6, bins=20, edgecolor='black', linewidth=1)
+    plt.savefig('../figures,params/' + figname)
 
 
 def best_fit_line(data, param):
@@ -32,30 +35,12 @@ def best_fit_line(data, param):
     return np.poly1d(z1)
 
 
-def plot_pswq(filename, title, figname):
-    df = pd.read_csv(filename)
-    subjects = anxiety['Subject']
-    rejects = reject.query('Reject == 1')['Subject'].tolist()
-    pswq_sums = []
-
-    alphas_h1 = []
-    alphas_h6 = []
-
-    sides_h1 = []
-    sides_h6 = []
-
-    sigmas_h1 = []
-    sigmas_h6 = []
-
-    # grab a subject
+def get_params(df):
+    alphas_h1 = alphas_h6 = sides_h1 = sides_h6 = sigmas_h1 = sigmas_h6 = []
     for s in range(len(subjects)):
         sub = subjects[s]
         if sub in rejects:
             continue
-
-        row = anxiety.iloc[s, 6:23]
-        # sum anxiety scores for the subject
-        pswq_sums.append(sum(row))
         # get function parameters from subject
         query_1 = df.query('Subject == @sub and Horizon == 1')
         alphas_h1.append(query_1['alpha'].tolist()[0])
@@ -65,6 +50,26 @@ def plot_pswq(filename, title, figname):
         alphas_h6.append(query_6['alpha'].tolist()[0])
         sides_h6.append(query_6['side'].tolist()[0])
         sigmas_h6.append(query_6['sigma'].tolist()[0])
+
+    return alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6
+
+
+def get_pswq():
+    pswq_sums = []
+    for s in range(len(subjects)):
+        sub = subjects[s]
+        if sub in rejects:
+            continue
+        row = anxiety.iloc[s, 6:23]
+        # sum anxiety scores for the subject
+        pswq_sums.append(sum(row))
+    return pswq_sums
+
+
+def plot_pswq(filename, title, figname):
+    df = pd.read_csv(filename)
+    alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
+    pswq_sums = get_pswq()
 
     fig, (alpha, side, sigma) = plt.subplots(1, 3, figsize=(32, 4))
     alpha.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
@@ -99,15 +104,16 @@ def plot_pswq(filename, title, figname):
 
 
 def main():
-    plot_pswq('../figures,params/params_by_horizon_zscored.csv',
-              'Plot of anxiety scores\n vs %s parameters\n(z scored)',
-              'params_by_horizon_zscored.png')
-    plot_pswq('../figures,params/params_by_horizon.csv',
-              'Plot of anxiety scores\n vs %s parameters',
-              'params_by_horizon.png')
+    # plot_pswq('../figures,params/params_by_horizon_zscored.csv',
+    #           'Plot of anxiety scores\n vs %s parameters\n(z scored)',
+    #           'params_by_horizon_zscored.png')
+    # plot_pswq('../figures,params/params_by_horizon.csv',
+    #           'Plot of anxiety scores\n vs %s parameters',
+    #           'params_by_horizon.png')
     plot_pswq('../figures,params/params_stan.csv',
               'Plot of anxiety scores\n vs %s parameters',
               'params_stan.png')
+    # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
 
 
 if __name__ == '__main__':
