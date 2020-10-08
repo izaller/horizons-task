@@ -97,7 +97,7 @@ def plot_params(test, filename, figname):
     df = pd.read_csv(filename)
     alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
 
-    fig, (alpha, side, sigma) = plt.subplots(nrows=3, ncols=1, figsize=(7,9))
+    fig, (alpha, side, sigma) = plt.subplots(nrows=1, ncols=3, figsize=(17,4))
 
     alpha.plot(scores, alphas_h1, 'o', color='blue', label='Horizon 1')
     alpha.plot(scores, alphas_h6, 'o', color='orange', label='Horizon 6')
