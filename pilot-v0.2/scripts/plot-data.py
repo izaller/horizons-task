@@ -103,9 +103,7 @@ def scatter_params(test, filename, figname):
     alpha.plot(scores, alphas_h1, 'o', color='blue', label='Horizon 1')
     alpha.plot(scores, alphas_h6, 'o', color='orange', label='Horizon 6')
     rho_1 = stats.spearmanr(scores, alphas_h1)[0]
-    print(rho_1)
     rho_6 = stats.spearmanr(scores, alphas_h6)[0]
-    print(rho_6)
     corr = 'spearman correlation, H1 = %f\nspearman correlation, H6 = %f' % (rho_1, rho_6)
     alpha.set(title='%s score vs. alpha' % test, xlabel='%s score\n%s' % (test, corr), ylabel='alpha')
     alpha.legend()
