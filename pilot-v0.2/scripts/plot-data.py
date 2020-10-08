@@ -61,6 +61,31 @@ def get_pswq():
     return pswq_sums
 
 
+def get_ius12():
+    ius12_sums = []
+    for s in range(len(subjects)):
+        sub = subjects[s]
+        if sub in rejects:
+            continue
+        row = anxiety.iloc[s, 28:41]
+        # sum anxiety scores for the subject
+        ius12_sums.append(sum(row))
+    return ius12_sums
+
+
+def get_nfc():
+    nfc_sums = []
+    for s in range(len(subjects)):
+        sub = subjects[s]
+        if sub in rejects:
+            continue
+        row = anxiety.iloc[s, 46:62]
+        print(row)
+        # sum anxiety scores for the subject
+        nfc_sums.append(sum(row))
+    return nfc_sums
+
+
 def plot_pswq(filename, title, figname):
     df = pd.read_csv(filename)
     alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
@@ -105,10 +130,11 @@ def main():
     # plot_pswq('../figures,params/params_by_horizon.csv',
     #           'Plot of anxiety scores\n vs %s parameters',
     #           'params_by_horizon.png')
-    plot_pswq('../figures,params/params_stan.csv',
-              'Plot of anxiety scores\n vs %s parameters',
-              'params_stan.png')
+    # plot_pswq('../figures,params/params_stan.csv',
+    #           'Plot of anxiety scores\n vs %s parameters',
+    #           'params_stan.png')
     # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
+    print(get_nfc())
 
 
 if __name__ == '__main__':
