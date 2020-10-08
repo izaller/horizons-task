@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # load global data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
 reject = pd.read_csv('../data/reject.csv')
-subjects = anxiety['Subject']
+subjects = anxiety['Subject'].unique()
 rejects = reject.query('Reject == 1')['Subject'].tolist()
 
 
@@ -25,13 +25,13 @@ def plot_alpha_hist(filename, figname):
     plt.savefig('../figures,params/' + figname)
 
 
-def best_fit_line(data, param):
-    z1 = np.polyfit(data, param, 1)
-    return np.poly1d(z1)
-
-
 def get_params(df):
-    alphas_h1 = alphas_h6 = sides_h1 = sides_h6 = sigmas_h1 = sigmas_h6 = []
+    alphas_h1 = []
+    alphas_h6 = []
+    sides_h1 = []
+    sides_h6 = []
+    sigmas_h1 = []
+    sigmas_h6 = []
     for s in range(len(subjects)):
         sub = subjects[s]
         if sub in rejects:
@@ -73,50 +73,45 @@ def get_ius12():
     return ius12_sums
 
 
-def get_nfc():
-    nfc_sums = []
+def get_ncs():
+    ncs_sums = []
     for s in range(len(subjects)):
         sub = subjects[s]
         if sub in rejects:
             continue
         row = anxiety.iloc[s, 46:62]
-        print(row)
         # sum anxiety scores for the subject
-        nfc_sums.append(sum(row))
-    return nfc_sums
+        ncs_sums.append(sum(row))
+    return ncs_sums
 
 
-def plot_pswq(filename, title, figname):
+def plot_params(test, filename, figname):
+    scores = -1
+    if test.upper() == 'PSWQ':
+        scores = get_pswq()
+    elif test.upper() == 'IUS12':
+        scores = get_ius12()
+    elif test.upper() == 'NCS':
+        scores = get_ncs()
+
     df = pd.read_csv(filename)
     alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
-    pswq_sums = get_pswq()
 
-    fig, (alpha, side, sigma) = plt.subplots(1, 3, figsize=(32, 4))
-    alpha.plot(pswq_sums, alphas_h1, 'o', color='blue', label='Horizon 1')
-    fit_a1 = best_fit_line(pswq_sums, alphas_h1)
-    alpha.plot(pswq_sums, fit_a1(pswq_sums), "-", color='blue')
-    alpha.plot(pswq_sums, alphas_h6, 'o', color='orange', label='Horizon 6')
-    fit_a6 = best_fit_line(pswq_sums, alphas_h6)
-    alpha.plot(pswq_sums, fit_a6(pswq_sums), "-", color='orange')
-    alpha.set(title=title % 'alpha (information)', xlabel='Sum PSWQ', ylabel='alpha')
+    fig, (alpha, side, sigma) = plt.subplots(nrows=3, ncols=1, figsize=(7,9))
+
+    alpha.plot(scores, alphas_h1, 'o', color='blue', label='Horizon 1')
+    alpha.plot(scores, alphas_h6, 'o', color='orange', label='Horizon 6')
+    alpha.set(title='%s score vs. alpha' % test, xlabel='%s score' % test, ylabel='alpha')
     alpha.legend()
 
-    side.plot(pswq_sums, sides_h1, 'o', color='blue', label='Horizon 1')
-    fit_sides1 = best_fit_line(pswq_sums, sides_h1)
-    side.plot(pswq_sums, fit_sides1(pswq_sums), "-", color='blue')
-    side.plot(pswq_sums, sides_h6, 'o', color='orange', label='Horizon 6')
-    fit_sides6 = best_fit_line(pswq_sums, sides_h6)
-    side.plot(pswq_sums, fit_sides6(pswq_sums), "-", color='orange')
-    side.set(title=title % 'side (spatial parameter)', xlabel='Sum PSWQ', ylabel='side')
+    side.plot(scores, sides_h1, 'o', color='blue', label='Horizon 1')
+    side.plot(scores, sides_h6, 'o', color='orange', label='Horizon 6')
+    side.set(title='%s score vs. side (spatial parameter)' % test, xlabel='%s score' % test, ylabel='side')
     side.legend()
 
-    sigma.plot(pswq_sums, sigmas_h1, 'o', color='blue', label='Horizon 1')
-    fit_sigmas1 = best_fit_line(pswq_sums, sigmas_h1)
-    sigma.plot(pswq_sums, fit_sigmas1(pswq_sums), "-", color='blue')
-    sigma.plot(pswq_sums, sigmas_h6, 'o', color='orange', label='Horizon 6')
-    fit_sigmas6 = best_fit_line(pswq_sums, sigmas_h6)
-    sigma.plot(pswq_sums, fit_sigmas6(pswq_sums), "-", color='orange')
-    sigma.set(title=title % 'sigma (information noise)', xlabel='Sum PSWQ', ylabel='sigma')
+    sigma.plot(scores, sigmas_h1, 'o', color='blue', label='Horizon 1')
+    sigma.plot(scores, sigmas_h6, 'o', color='orange', label='Horizon 6')
+    sigma.set(title='%s score vs. sigma (information noise)' % test, xlabel='%s score' % test, ylabel='sigma')
     sigma.legend()
 
     plt.tight_layout()
@@ -124,17 +119,24 @@ def plot_pswq(filename, title, figname):
 
 
 def main():
-    # plot_pswq('../figures,params/params_by_horizon_zscored.csv',
-    #           'Plot of anxiety scores\n vs %s parameters\n(z scored)',
-    #           'params_by_horizon_zscored.png')
-    # plot_pswq('../figures,params/params_by_horizon.csv',
-    #           'Plot of anxiety scores\n vs %s parameters',
-    #           'params_by_horizon.png')
-    # plot_pswq('../figures,params/params_stan.csv',
-    #           'Plot of anxiety scores\n vs %s parameters',
-    #           'params_stan.png')
+    # plot_pswq('PSWQ',
+    #           '../figures,params/params_by_horizon_zscored.csv',
+    #           'Penn State Worry Questionnaire score vs. %s\n(z scored)',
+    #           'PSWQ_params_by_horizon_zscored.png')
+    # plot_pswq('PSWQ',
+    #           '../figures,params/params_by_horizon.csv',
+    #           'Penn State Worry Questionnaire score vs. %s',
+    #           'PSWQ_params_by_horizon.png')
+    plot_params('PSWQ',
+                '../figures,params/params_stan.csv',
+                'PSWQ_params_stan.png')
     # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
-    print(get_nfc())
+    plot_params('IUS12',
+                '../figures,params/params_stan.csv',
+                'IUS12_params_stan.png')
+    plot_params('NCS',
+                '../figures,params/params_stan.csv',
+                'NCS_params_stan.png')
 
 
 if __name__ == '__main__':
