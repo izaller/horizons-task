@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy import stats
 
 # load global data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
@@ -85,7 +86,7 @@ def get_ncs():
     return ncs_sums
 
 
-def plot_params(test, filename, figname):
+def scatter_params(test, filename, figname):
     scores = -1
     if test.upper() == 'PSWQ':
         scores = get_pswq()
@@ -101,7 +102,12 @@ def plot_params(test, filename, figname):
 
     alpha.plot(scores, alphas_h1, 'o', color='blue', label='Horizon 1')
     alpha.plot(scores, alphas_h6, 'o', color='orange', label='Horizon 6')
-    alpha.set(title='%s score vs. alpha' % test, xlabel='%s score' % test, ylabel='alpha')
+    rho_1 = stats.spearmanr(scores, alphas_h1)[0]
+    print(rho_1)
+    rho_6 = stats.spearmanr(scores, alphas_h6)[0]
+    print(rho_6)
+    corr = 'spearman correlation, H1 = %f\nspearman correlation, H6 = %f' % (rho_1, rho_6)
+    alpha.set(title='%s score vs. alpha' % test, xlabel='%s score\n%s' % (test, corr), ylabel='alpha')
     alpha.legend()
 
     side.plot(scores, sides_h1, 'o', color='blue', label='Horizon 1')
@@ -127,16 +133,16 @@ def main():
     #           '../figures,params/params_by_horizon.csv',
     #           'Penn State Worry Questionnaire score vs. %s',
     #           'PSWQ_params_by_horizon.png')
-    plot_params('PSWQ',
-                '../figures,params/params_stan.csv',
-                'PSWQ_params_stan.png')
+    scatter_params('PSWQ',
+                   '../figures,params/params_stan.csv',
+                   'PSWQ_params_stan.png')
     # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
-    plot_params('IUS12',
-                '../figures,params/params_stan.csv',
-                'IUS12_params_stan.png')
-    plot_params('NCS',
-                '../figures,params/params_stan.csv',
-                'NCS_params_stan.png')
+    scatter_params('IUS12',
+                   '../figures,params/params_stan.csv',
+                   'IUS12_params_stan.png')
+    scatter_params('NCS',
+                   '../figures,params/params_stan.csv',
+                   'NCS_params_stan.png')
 
 
 if __name__ == '__main__':
