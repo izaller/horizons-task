@@ -74,26 +74,28 @@ def get_ius12():
     return ius12_sums
 
 
-def get_ncs():
+def get_ncs(fullrow):
     ncs_sums = []
     for s in range(len(subjects)):
         sub = subjects[s]
         if sub in rejects:
             continue
         row = anxiety.iloc[s, 46:62]
+        if not fullrow:
+            row = row[6:9]
         # sum anxiety scores for the subject
         ncs_sums.append(sum(row))
     return ncs_sums
 
 
-def scatter_params(test, filename, figname):
+def scatter_params(test, filename, figname, fullrow=True):
     scores = -1
     if test.upper() == 'PSWQ':
         scores = get_pswq()
     elif test.upper() == 'IUS12':
         scores = get_ius12()
     elif test.upper() == 'NCS':
-        scores = get_ncs()
+        scores = get_ncs(fullrow)
 
     df = pd.read_csv(filename)
     alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
@@ -131,16 +133,20 @@ def main():
     #           '../figures,params/params_by_horizon.csv',
     #           'Penn State Worry Questionnaire score vs. %s',
     #           'PSWQ_params_by_horizon.png')
-    scatter_params('PSWQ',
-                   '../figures,params/params_stan.csv',
-                   'PSWQ_params_stan.png')
-    # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
-    scatter_params('IUS12',
-                   '../figures,params/params_stan.csv',
-                   'IUS12_params_stan.png')
+    # scatter_params('PSWQ',
+    #                '../figures,params/params_stan.csv',
+    #                'PSWQ_params_stan.png')
+    # # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
+    # scatter_params('IUS12',
+    #                '../figures,params/params_stan.csv',
+    #                'IUS12_params_stan.png')
     scatter_params('NCS',
                    '../figures,params/params_stan.csv',
                    'NCS_params_stan.png')
+    scatter_params('NCS',
+                   '../figures,params/params_stan.csv',
+                   'NCS_decisiveness_params_stan.png',
+                   fullrow=False)
 
 
 if __name__ == '__main__':
