@@ -1,4 +1,5 @@
 # plot parameters by subject
+from statistics import mean
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -124,6 +125,26 @@ def scatter_params(test, filename, figname, fullrow=True):
     plt.savefig('../figures,params/' + figname)
 
 
+def plot_info(filename, figname):
+    df = pd.read_csv(filename)
+
+    alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
+
+    fig, (alpha, side, sigma) = plt.subplots(nrows=1, ncols=3, figsize=(17, 4))
+
+    alpha.bar([1, 2], [mean(alphas_h1), mean(alphas_h6)], tick_label=["Horizon 1", "Horizon 6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
+    alpha.set(title='Information Parameter', ylabel='average alpha')
+
+    side.bar([1, 2], [mean(sides_h1), mean(sides_h6)], tick_label=["Horizon 1", "Horizon 6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
+    side.set(title='Spatial Parameter', ylabel=' average side')
+
+    sigma.bar([1, 2], [mean(sigmas_h1), mean(sigmas_h6)], tick_label=["Horizon 1", "Horizon 6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
+    side.set(title='Decision Noise', ylabel='average sigma')
+
+    plt.tight_layout()
+    plt.savefig('../figures,params/' + figname)
+
+
 def main():
     # plot_pswq('PSWQ',
     #           '../figures,params/params_by_horizon_zscored.csv',
@@ -140,13 +161,14 @@ def main():
     # scatter_params('IUS12',
     #                '../figures,params/params_stan.csv',
     #                'IUS12_params_stan.png')
-    scatter_params('NCS',
-                   '../figures,params/params_stan.csv',
-                   'NCS_params_stan.png')
-    scatter_params('NCS',
-                   '../figures,params/params_stan.csv',
-                   'NCS_decisiveness_params_stan.png',
-                   fullrow=False)
+    # scatter_params('NCS',
+    #                '../figures,params/params_stan.csv',
+    #                'NCS_params_stan.png')
+    # scatter_params('NCS',
+    #                '../figures,params/params_stan.csv',
+    #                'NCS_decisiveness_params_stan.png',
+    #                fullrow=False)
+    plot_info('../figures,params/params_stan.csv', 'bar_plot_params.png')
 
 
 if __name__ == '__main__':
