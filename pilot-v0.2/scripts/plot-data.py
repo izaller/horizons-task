@@ -1,10 +1,8 @@
 # plot parameters by subject
 from statistics import mean
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
-import seaborn as sns
 
 # load global data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
@@ -13,6 +11,8 @@ subjects = anxiety['Subject'].unique()
 rejects = reject.query('Reject == 1')['Subject'].tolist()
 
 
+# filename is the path to df
+# figname is the filepath where the figure will be saved
 def plot_alpha_hist(filename, figname):
     df = pd.read_csv(filename)
     alpha_h1 = df.query('Horizon == 1')['alpha']
@@ -25,9 +25,10 @@ def plot_alpha_hist(filename, figname):
 
     h1.hist(alpha_h1, bins=20, edgecolor='black', linewidth=1)
     h6.hist(alpha_h6, bins=20, edgecolor='black', linewidth=1)
-    plt.savefig('../figures,params/' + figname)
+    plt.savefig(figname)
 
 
+# returns parameters of interest (alpha, side, sigma) split by horizon
 def get_params(df):
     alphas_h1 = []
     alphas_h6 = []
@@ -52,6 +53,7 @@ def get_params(df):
     return alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6
 
 
+# returns sum pswq score for all subjects
 def get_pswq():
     pswq_sums = []
     for s in range(len(subjects)):
@@ -64,6 +66,7 @@ def get_pswq():
     return pswq_sums
 
 
+# returns sum IUS12 score for all subjects
 def get_ius12():
     ius12_sums = []
     for s in range(len(subjects)):
@@ -76,6 +79,9 @@ def get_ius12():
     return ius12_sums
 
 
+# returns sum NCS score
+    # if fullrow is True, sum across the entire row
+    # if fullrow is False, sum only the questions corresponding to decisiveness
 def get_ncs(fullrow):
     ncs_sums = []
     for s in range(len(subjects)):
@@ -90,6 +96,11 @@ def get_ncs(fullrow):
     return ncs_sums
 
 
+# test is the name of the anxiety questionnaire (PSWQ, IUS12, NCS)
+# filename is the path to df
+# figname is the filepath where the figure will be saved
+# fullrow is set to false in the main function only when we want to analyze individual sections of questionnaires
+    # for further info, see function "get_ncs"
 def scatter_params(test, filename, figname, fullrow=True):
     scores = -1
     if test.upper() == 'PSWQ':
@@ -123,9 +134,11 @@ def scatter_params(test, filename, figname, fullrow=True):
     sigma.legend()
 
     plt.tight_layout()
-    plt.savefig('../figures,params/' + figname)
+    plt.savefig(figname)
 
 
+# filename is the path to df
+# figname is the filepath where the figure will be saved
 def plot_bars(filename, figname):
     df = pd.read_csv(filename)
 
@@ -144,25 +157,25 @@ def plot_bars(filename, figname):
     sigma.set(title='Decision Noise', ylabel='average sigma')
 
     plt.tight_layout()
-    plt.savefig('../figures,params/' + figname)
+    plt.savefig(figname)
 
 
 def main():
     scatter_params('PSWQ',
                    '../figures,params/params_stan.csv',
-                   'PSWQ_params_stan.png')
+                   '../figures,params/PSWQ_params_stan.png')
     plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
     scatter_params('IUS12',
                    '../figures,params/params_stan.csv',
-                   'IUS12_params_stan.png')
+                   '../figures,params/IUS12_params_stan.png')
     scatter_params('NCS',
                    '../figures,params/params_stan.csv',
-                   'NCS_params_stan.png')
+                   '../figures,params/NCS_params_stan.png')
     scatter_params('NCS',
                    '../figures,params/params_stan.csv',
-                   'NCS_decisiveness_params_stan.png',
+                   '../figures,params/NCS_decisiveness_params_stan.png',
                    fullrow=False)
-    plot_bars('../figures,params/params_stan.csv', 'bar_plot_params.png')
+    plot_bars('../figures,params/params_stan.csv', '../figures,params/bar_plot_params.png')
 
 
 if __name__ == '__main__':
