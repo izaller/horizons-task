@@ -126,7 +126,7 @@ def scatter_params(test, filename, figname, fullrow=True):
     plt.savefig('../figures,params/' + figname)
 
 
-def plot_info(filename, figname):
+def plot_bars(filename, figname):
     df = pd.read_csv(filename)
 
     alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
@@ -148,29 +148,21 @@ def plot_info(filename, figname):
 
 
 def main():
-    # plot_pswq('PSWQ',
-    #           '../figures,params/params_by_horizon_zscored.csv',
-    #           'Penn State Worry Questionnaire score vs. %s\n(z scored)',
-    #           'PSWQ_params_by_horizon_zscored.png')
-    # plot_pswq('PSWQ',
-    #           '../figures,params/params_by_horizon.csv',
-    #           'Penn State Worry Questionnaire score vs. %s',
-    #           'PSWQ_params_by_horizon.png')
-    # scatter_params('PSWQ',
-    #                '../figures,params/params_stan.csv',
-    #                'PSWQ_params_stan.png')
-    # # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
-    # scatter_params('IUS12',
-    #                '../figures,params/params_stan.csv',
-    #                'IUS12_params_stan.png')
-    # scatter_params('NCS',
-    #                '../figures,params/params_stan.csv',
-    #                'NCS_params_stan.png')
-    # scatter_params('NCS',
-    #                '../figures,params/params_stan.csv',
-    #                'NCS_decisiveness_params_stan.png',
-    #                fullrow=False)
-    plot_info('../figures,params/params_stan.csv', 'bar_plot_params.png')
+    scatter_params('PSWQ',
+                   '../figures,params/params_stan.csv',
+                   'PSWQ_params_stan.png')
+    plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
+    scatter_params('IUS12',
+                   '../figures,params/params_stan.csv',
+                   'IUS12_params_stan.png')
+    scatter_params('NCS',
+                   '../figures,params/params_stan.csv',
+                   'NCS_params_stan.png')
+    scatter_params('NCS',
+                   '../figures,params/params_stan.csv',
+                   'NCS_decisiveness_params_stan.png',
+                   fullrow=False)
+    plot_bars('../figures,params/params_stan.csv', 'bar_plot_params.png')
 
 
 if __name__ == '__main__':
