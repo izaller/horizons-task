@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
+import seaborn as sns
 
 # load global data
 anxiety = pd.read_csv('../data/surveys.csv').copy()
@@ -133,13 +134,14 @@ def plot_info(filename, figname):
     fig, (alpha, side, sigma) = plt.subplots(nrows=1, ncols=3, figsize=(17, 4))
 
     alpha.bar([1, 2], [mean(alphas_h1), mean(alphas_h6)], tick_label=["Horizon 1", "Horizon 6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
-    alpha.set(title='Information Parameter', ylabel='average alpha')
+    alpha.set(title='Information Parameter', ylabel='average infomation bonus')
+    alpha.axhline(y=0, color='black')
 
     side.bar([1, 2], [mean(sides_h1), mean(sides_h6)], tick_label=["Horizon 1", "Horizon 6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
-    side.set(title='Spatial Parameter', ylabel=' average side')
+    side.set(title='Spatial Parameter', ylabel='average spatial bias')
 
     sigma.bar([1, 2], [mean(sigmas_h1), mean(sigmas_h6)], tick_label=["Horizon 1", "Horizon 6"], color=('tab:blue', 'tab:orange'), edgecolor='k')
-    side.set(title='Decision Noise', ylabel='average sigma')
+    sigma.set(title='Decision Noise', ylabel='average sigma')
 
     plt.tight_layout()
     plt.savefig('../figures,params/' + figname)
