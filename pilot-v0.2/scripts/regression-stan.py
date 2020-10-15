@@ -92,8 +92,15 @@ def writeData(params_h1, params_h6, filename):
 
 
 def main():
+    # # Compile model.
+    # StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic.pkl')
+    #
+    # params_h1 = model_h1(StanModel)
+    # params_h6 = model_h6(StanModel)
+    # writeData(params_h1, params_h6, 'params_stan.csv')
+
     # Compile model.
-    StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic.pkl')
+    StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/hierarchical.stan')
 
     params_h1 = model_h1(StanModel)
     params_h6 = model_h6(StanModel)
