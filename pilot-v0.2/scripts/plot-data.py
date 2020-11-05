@@ -161,21 +161,36 @@ def plot_bars(filename, figname):
 
 
 def main():
+    # scatter_params('PSWQ',
+    #                '../figures,params/params_stan.csv',
+    #                '../figures,params/PSWQ_params_stan.png')
+    # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
+    # scatter_params('IUS12',
+    #                '../figures,params/params_stan.csv',
+    #                '../figures,params/IUS12_params_stan.png')
+    # scatter_params('NCS',
+    #                '../figures,params/params_stan.csv',
+    #                '../figures,params/NCS_params_stan.png')
+    # scatter_params('NCS',
+    #                '../figures,params/params_stan.csv',
+    #                '../figures,params/NCS_decisiveness_params_stan.png',
+    #                fullrow=False)
+    # plot_bars('../figures,params/params_stan.csv', '../figures,params/bar_plot_params.png')
+    plot_bars('../figures,params/params_stan_hierachical.csv', '../figures,params/bar_plot_params_hierarchical.png')
     scatter_params('PSWQ',
-                   '../figures,params/params_stan.csv',
-                   '../figures,params/PSWQ_params_stan.png')
+                   '../figures,params/params_stan_hierachical.csv',
+                   '../figures,params/PSWQ_params_stan_hierachical.png')
     plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
     scatter_params('IUS12',
-                   '../figures,params/params_stan.csv',
-                   '../figures,params/IUS12_params_stan.png')
+                   '../figures,params/params_stan_hierachical.csv',
+                   '../figures,params/IUS12_params_stan_hierachical.png')
     scatter_params('NCS',
-                   '../figures,params/params_stan.csv',
-                   '../figures,params/NCS_params_stan.png')
+                   '../figures,params/params_stan_hierachical.csv',
+                   '../figures,params/NCS_params_stan_hierachical.png')
     scatter_params('NCS',
-                   '../figures,params/params_stan.csv',
-                   '../figures,params/NCS_decisiveness_params_stan.png',
+                   '../figures,params/params_stan_hierachical.csv',
+                   '../figures,params/NCS_decisiveness_params_stan_hierachical.png',
                    fullrow=False)
-    plot_bars('../figures,params/params_stan.csv', '../figures,params/bar_plot_params.png')
 
 
 if __name__ == '__main__':

@@ -104,7 +104,7 @@ def main():
 
     params_h1 = model_h1(StanModel)
     params_h6 = model_h6(StanModel)
-    writeData(params_h1, params_h6, 'params_stan.csv')
+    writeData(params_h1, params_h6, 'params_stan_hierachical.csv')
 
 
 if __name__ == '__main__':
