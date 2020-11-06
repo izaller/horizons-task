@@ -30,103 +30,111 @@ sigma = np.abs(np.random.normal(1,0.25,K))
 ## Subject-level parameters.
 beta = np.random.normal(mu, sigma, (N,K)).T
 
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ### Get data.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-## Define logistic function.
-def inv_logit(x):
-    return 1 / (1 + np.exp(-x))
+def getData():
+    ## Define design matrix.
+    X = np.column_stack([
+        np.ones(T),
+        np.linspace(-2, 2, T),
+        np.linspace(-2, 2, T)
+    ])
 
-## get trial data
+    ## Preallocate space.
+    Y = np.zeros((N, T), dtype=int)  ### choice data
+    info = np.zeros((N, T), dtype=int)  ### info
+    delta = np.zeros((N, T), dtype=int)  ### delta
 
+    i = 0
+    for s in subjects:
+        if s in rejects:
+            continue
+        data = df.query('Subject == @s and Horizon == 5 and Trial == 5')
+        Y[i] = data['Choice']
+        info[i] = data['Info']
+        delta[i] = adjust_delta(data['delta'], info[i])
+        i += 1
 
-## Define design matrix.
-X = np.column_stack([
-    np.ones(T),
-    np.linspace(-2,2,T),
-    np.linspace(-2,2,T)
-])
-
-## Preallocate space.
-Y = np.zeros((N,T), dtype=int)  ### choice data
-info = np.zeros((N,T), dtype=int)  ### info
-delta = np.zeros((N,T), dtype=int)  ### delta
-
-
-i = 0
-for s in subjects:
-    if s in rejects:
-        continue
-    data = df.query('Subject == @s and Horizon == 5 and Trial == 5')
-    Y[i] = data['Choice']
-    info[i] = data['Info']
-    delta[i] = data['delta']
-    i += 1
+    ## Assemble data and return.
+    return dict(N=N, K=K, T=T, X=X, Y=Y, info=info, delta=delta)
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### Define parameters.
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-## I/O parameters.
-stan_model = 'hierarchical-logistic'
-
-## Sampling parameters.
-samples = 2000
-warmup = 1500
-chains = 4
-thin = 1
-n_jobs = 4
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### Fit model w/ Stan.
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-## Assemble data.
-dd = dict(N=N, K=K, T=T, X=X, Y=Y, info=info, delta=delta)
-
-## Load Stan model.
-StanModel = load_model(stan_model)
-
-# Fit model.
-StanFit = StanModel.sampling(data=dd, iter=samples, warmup=warmup, chains=chains, thin=thin,
-                             n_jobs=n_jobs, seed=47404)
-
-print(StanFit)
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### inspect data
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-## inspect chains
-chains = StanFit.extract(inc_warmup=True, permuted=False)
-print(chains.shape)
-plt.figure()
-plt.plot(chains[...,0]) ## TODO different plots
-
-## inspect distributions
-samples = StanFit.extract()
-
-plt.figure()
-sns.distplot(samples['mu'][:,0]) ## TODO different plots
-
-## posterior predictive check
-beta_hat = np.median(samples['beta'], axis=0)
-plt.figure()
-ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])  ## TODO different plots
-plt.figure()
-ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])  ## TODO different plots
-ax.plot([-1,5],[-1,5])
-ax.set(xlabel='True', ylabel='Predicted')
+# Info: 0 = [2,2] trial, 1 = [3,1] trial, -1 = [1,3] trial
+def adjust_delta(deltas, info):
+    for i in range(len(deltas)):
+        if info[i] == -1:
+            deltas[i] = -deltas[i]
+    return deltas
 
 
-print(np.corrcoef(beta[0], beta_hat[:,0]))
+def main():
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    ### Define parameters.
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### Save data
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-from stantools.io import load_fit
+    ## I/O parameters.
+    stan_model = 'hierarchical-logistic'
 
-test = load_fit('hierarchical-logistic.pkl')
+    ## Sampling parameters.
+    samples = 2000
+    warmup = 1500
+    chains = 4
+    thin = 1
+    n_jobs = 4
 
-save_fit(stan_model, StanFit, data=dd)
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    ### Fit model w/ Stan.
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+    ## Load Stan model.
+    StanModel = load_model(stan_model)
+
+    dd = getData()
+
+    # Fit model.
+    StanFit = StanModel.sampling(data=dd, iter=samples, warmup=warmup, chains=chains, thin=thin,
+                                 n_jobs=n_jobs, seed=47404)
+    print(StanFit)
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    ### inspect data
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+    ## inspect chains
+    chains = StanFit.extract(inc_warmup=True, permuted=False)
+    print(chains.shape)
+    plt.figure()
+    plt.plot(chains[...,0]) ## TODO different plots
+
+    ## inspect distributions
+    samples = StanFit.extract()
+
+    plt.figure()
+    sns.distplot(samples['mu'][:,0]) ## TODO different plots
+
+    ## posterior predictive check
+    beta_hat = np.median(samples['beta'], axis=0)
+    plt.figure()
+    ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])  ## TODO different plots
+    plt.figure()
+    ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])  ## TODO different plots
+    ax.plot([-1,5],[-1,5])
+    ax.set(xlabel='True', ylabel='Predicted')
+
+
+    print(np.corrcoef(beta[0], beta_hat[:,0]))
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    ### Save data
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    from stantools.io import load_fit
+
+    test = load_fit('hierarchical-logistic.pkl')
+
+    save_fit(stan_model, StanFit, data=dd)
+
+
+if __name__ == '__main__':
+    main()
