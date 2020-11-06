@@ -6,7 +6,6 @@ data {
     int  T;                  // Number of trials (per participant)
 
     // Data
-    matrix[T,K]  X;          // Design matrix
     int          Y[N,T];     // Choice data
     int          info[N,T];  // info
     int          delta[N,T]; // delta
