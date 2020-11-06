@@ -33,6 +33,8 @@ model {
     }
 
     // Likelihood
-    Y ~ bernoulli_logit( (delta + info * beta[0] + beta[1]) / beta[2]
 
+    for (i in 1:N) {
+        Y[i] ~ bernoulli_logit( (delta[i] + info[i] * beta[i,1] + beta[i,2]) / beta[i,3] );
+    }
 }
