@@ -54,7 +54,7 @@ def getData():
         data = df.query('Subject == @s and Horizon == 5 and Trial == 5')
         Y[i] = data['Choice']
         info[i] = data['Info']
-        delta[i] = adjust_delta(data['delta'], info[i])
+        delta[i] = adjust_delta(data['delta'].reset_index(drop=True), info[i])
         i += 1
 
     ## Assemble data and return.
@@ -106,20 +106,20 @@ def main():
     chains = StanFit.extract(inc_warmup=True, permuted=False)
     print(chains.shape)
     plt.figure()
-    plt.plot(chains[...,0]) ## TODO different plots
+    plt.plot(chains[...,0])
 
     ## inspect distributions
     samples = StanFit.extract()
 
     plt.figure()
-    sns.distplot(samples['mu'][:,0]) ## TODO different plots
+    sns.distplot(samples['mu'][:,0])
 
     ## posterior predictive check
     beta_hat = np.median(samples['beta'], axis=0)
     plt.figure()
-    ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])  ## TODO different plots
+    ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])
     plt.figure()
-    ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])  ## TODO different plots
+    ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])
     ax.plot([-1,5],[-1,5])
     ax.set(xlabel='True', ylabel='Predicted')
 
