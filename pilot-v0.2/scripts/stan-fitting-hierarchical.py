@@ -2,7 +2,14 @@ import pystan
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 from stantools.io import load_model, save_fit
+
+df = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/data.csv')
+reject = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/reject.csv')
+
+subjects = df['Subject'].unique()
+rejects = reject.query('Reject == 1')['Subject'].tolist()
 
 np.random.seed(47404)
 
@@ -11,9 +18,10 @@ np.random.seed(47404)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 ## Define metadata.
-N = 20
-K = 2
-T = 50
+
+N = len(subjects) - len(rejects)  ## number of subjects
+K = 3   ## number of params to be fitted per subject (info, side, sigma)
+T = 40  ## number of trials per participant (40 for each horizon)
 
 ## Group-level parameters.
 mu = np.random.normal(0, 1, K)
@@ -25,25 +33,35 @@ beta = np.random.normal(mu, sigma, (N,K)).T
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ### Get data.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
 ## Define logistic function.
 def inv_logit(x):
-     return 1 / (1 + np.exp(-x))
+    return 1 / (1 + np.exp(-x))
+
+## get trial data
+
 
 ## Define design matrix.
 X = np.column_stack([
     np.ones(T),
+    np.linspace(-2,2,T),
     np.linspace(-2,2,T)
 ])
 
 ## Preallocate space.
-Y = np.zeros((N,T), dtype=int)
+Y = np.zeros((N,T), dtype=int)  ### choice data
+info = np.zeros((N,T), dtype=int)  ### info
+delta = np.zeros((N,T), dtype=int)  ### delta
 
-## Iteratively simulate choices.
-for i in range(N):
-    theta = inv_logit( X @ beta[:,i] )
-    Y[i] = np.random.binomial(1, theta)
 
+i = 0
+for s in subjects:
+    if s in rejects:
+        continue
+    data = df.query('Subject == @s and Horizon == 5 and Trial == 5')
+    Y[i] = data['Choice']
+    info[i] = data['Info']
+    delta[i] = data['delta']
+    i += 1
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -51,7 +69,7 @@ for i in range(N):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 ## I/O parameters.
-stan_model = 'hierarchical_logistic'
+stan_model = 'hierarchical-logistic'
 
 ## Sampling parameters.
 samples = 2000
@@ -65,12 +83,12 @@ n_jobs = 4
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 ## Assemble data.
-dd = dict(N=N, K=K, T=T, X=X, Y=Y)
+dd = dict(N=N, K=K, T=T, X=X, Y=Y, info=info, delta=delta)
 
 ## Load Stan model.
 StanModel = load_model(stan_model)
 
-## Fit model.
+# Fit model.
 StanFit = StanModel.sampling(data=dd, iter=samples, warmup=warmup, chains=chains, thin=thin,
                              n_jobs=n_jobs, seed=47404)
 
@@ -83,27 +101,32 @@ print(StanFit)
 ## inspect chains
 chains = StanFit.extract(inc_warmup=True, permuted=False)
 print(chains.shape)
-plt.plot(chains[...,0])
+plt.figure()
+plt.plot(chains[...,0]) ## TODO different plots
 
 ## inspect distributions
 samples = StanFit.extract()
 
-sns.histplot(samples['mu'][:,0])
+plt.figure()
+sns.distplot(samples['mu'][:,0]) ## TODO different plots
 
 ## posterior predictive check
 beta_hat = np.median(samples['beta'], axis=0)
-ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])
-ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])
+plt.figure()
+ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])  ## TODO different plots
+plt.figure()
+ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])  ## TODO different plots
 ax.plot([-1,5],[-1,5])
 ax.set(xlabel='True', ylabel='Predicted')
 
-np.corrcoef(beta[0], beta_hat[:,0])
+
+print(np.corrcoef(beta[0], beta_hat[:,0]))
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ### Save data
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 from stantools.io import load_fit
 
-test = load_fit('hierarchical-logistic.pxkl')
+test = load_fit('hierarchical-logistic.pkl')
 
 save_fit(stan_model, StanFit, data=dd)
