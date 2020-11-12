@@ -118,11 +118,9 @@ def main():
     beta_hat = np.median(samples['beta'], axis=0)
     plt.figure()
     ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])
-    plt.figure()
     ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])
     ax.plot([-1,5],[-1,5])
     ax.set(xlabel='True', ylabel='Predicted')
-
 
     print(np.corrcoef(beta[0], beta_hat[:,0]))
 
