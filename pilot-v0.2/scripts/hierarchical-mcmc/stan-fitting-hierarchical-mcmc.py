@@ -5,8 +5,8 @@ import seaborn as sns
 import pandas as pd
 from stantools.io import load_model, save_fit
 
-df = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/data.csv')
-reject = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/reject.csv')
+df = pd.read_csv('/pilot-v0.2/data/data.csv')
+reject = pd.read_csv('/pilot-v0.2/data/reject.csv')
 
 subjects = df['Subject'].unique()
 rejects = reject.query('Reject == 1')['Subject'].tolist()

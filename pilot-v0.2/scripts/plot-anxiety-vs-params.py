@@ -1,3 +1,7 @@
+## -------------------------------------------------- ##
+# Plot anxiety scores vs. model parameter fits
+## -------------------------------------------------- ##
+
 # plot parameters by subject
 from statistics import mean
 import pandas as pd
@@ -164,34 +168,34 @@ def plot_bars(filename, figname):
 
 def main():
     # scatter_params('PSWQ',
-    #                '../figures,params/params_stan.csv',
-    #                '../figures,params/PSWQ_params_stan.png')
-    # plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
+    #                '../figures/params_stan.csv',
+    #                '../figures/PSWQ_params_stan.png')
+    # plot_alpha_hist('../figures/params_stan.csv', 'alpha_hist_stan.png')
     # scatter_params('IUS12',
-    #                '../figures,params/params_stan.csv',
-    #                '../figures,params/IUS12_params_stan.png')
+    #                '../figures/params_stan.csv',
+    #                '../figures/IUS12_params_stan.png')
     # scatter_params('NCS',
-    #                '../figures,params/params_stan.csv',
-    #                '../figures,params/NCS_params_stan.png')
+    #                '../figures/params_stan.csv',
+    #                '../figures/NCS_params_stan.png')
     # scatter_params('NCS',
-    #                '../figures,params/params_stan.csv',
-    #                '../figures,params/NCS_decisiveness_params_stan.png',
+    #                '../figures/params_stan.csv',
+    #                '../figures/NCS_decisiveness_params_stan.png',
     #                fullrow=False)
-    # plot_bars('../figures,params/params_stan.csv', '../figures,params/bar_plot_params.png')
-    plot_bars('../figures,params/params_stan_hierachical.csv', '../figures,params/bar_plot_params_hierarchical.png')
+    # plot_bars('../figures/params_stan.csv', '../figures/bar_plot_params.png')
+    plot_bars('../param-csv-output/params_stan_hierachical.csv', '../figures/bar_plot_params_hierarchical.png')
     scatter_params('PSWQ',
-                   '../figures,params/params_stan_hierachical.csv',
-                   '../figures,params/PSWQ_params_stan_hierachical.png')
-    plot_alpha_hist('../figures,params/params_stan.csv', 'alpha_hist_stan.png')
+                   '../param-csv-output/params_stan_hierachical.csv',
+                   '../figures/PSWQ_params_stan_hierachical.png')
+    plot_alpha_hist('../param-csv-output/params_stan.csv', 'alpha_hist_stan.png')
     scatter_params('IUS12',
-                   '../figures,params/params_stan_hierachical.csv',
-                   '../figures,params/IUS12_params_stan_hierachical.png')
+                   '../param-csv-output/params_stan_hierachical.csv',
+                   '../figures/IUS12_params_stan_hierachical.png')
     scatter_params('NCS',
-                   '../figures,params/params_stan_hierachical.csv',
-                   '../figures,params/NCS_params_stan_hierachical.png')
+                   '../param-csv-output/params_stan_hierachical.csv',
+                   '../figures/NCS_params_stan_hierachical.png')
     scatter_params('NCS',
-                   '../figures,params/params_stan_hierachical.csv',
-                   '../figures,params/NCS_decisiveness_params_stan_hierachical.png',
+                   '../param-csv-output/params_stan_hierachical.csv',
+                   '../figures/NCS_decisiveness_params_stan_hierachical.png',
                    fullrow=False)
 
 

@@ -3,7 +3,6 @@
 ## -------------------------------------------------- ##
 
 import numpy as np
-import matplotlib.pyplot as plt
 from stantools.io import load_model
 import pandas as pd
 import seaborn as sns
@@ -79,7 +78,7 @@ def writeData(params_h1, params_h6, filename):
     rejects = reject.query('Reject == 1')['Subject'].tolist()
     n = len(subjects)
 
-    with open('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/figures,params/' + filename,
+    with open('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/figures/' + filename,
               'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])

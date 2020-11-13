@@ -211,7 +211,7 @@ def run_four(zscored=True):
     n = len(subjects)
     rejects = reject.query('Reject == 1')['Subject'].tolist()
 
-    with open('../../figures,params/params_by_horizon_and_info.csv', 'w', newline='') as file:  ## horizon x more and less informative
+    with open('../../param-csv-output/params_by_horizon_and_info.csv', 'w', newline='') as file:  ## horizon x more and less informative
         writer = csv.writer(file)
         writer.writerow(['Subject', 'type', 'alpha', 'side', 'sigma'])
         bounds = ([-20,20],[-10,10],[1e-9,None])  # alpha, side, sigma
@@ -237,7 +237,7 @@ def run_by_horizon(filename, zscored=True):
     n = len(subjects)
     rejects = reject.query('Reject == 1')['Subject'].tolist()
 
-    with open('../figures,params/' + filename, 'w', newline='') as file:
+    with open('../figures/' + filename, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Subject', 'Horizon', 'alpha', 'side', 'sigma'])  #
         bounds = ([-20, 20], [-20, 20], [1e-9, 20])  # alpha, side, sigma
