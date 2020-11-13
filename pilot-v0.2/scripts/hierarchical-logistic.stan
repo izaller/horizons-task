@@ -13,12 +13,16 @@ data {
 }
 parameters {
 
-    // Group-level parameters
-    vector[K]           mu;
-    vector<lower=0>[K]  sigma;
+    // Group-level parameters TODO make separate parameters instead of vector
+    real                gr_alpha;
+    real                gr_side;
+    real<lower=0>       gr_sigma;
+    vector<lower=0>[K]  gr_sd;  // standard dev for all params
 
     // Subject-level parameters
-    vector[K]  beta[N];
+    real                alpha;
+    real                side;
+    real<lower=0>       sigma;
 
 }
 model {
