@@ -5,8 +5,8 @@ import seaborn as sns
 import pandas as pd
 from stantools.io import load_model, save_fit
 
-df = pd.read_csv('/pilot-v0.2/data/data.csv')
-reject = pd.read_csv('/pilot-v0.2/data/reject.csv')
+df = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/data.csv')
+reject = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/reject.csv')
 
 subjects = df['Subject'].unique()
 rejects = reject.query('Reject == 1')['Subject'].tolist()
@@ -75,7 +75,7 @@ def main():
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
     ## I/O parameters.
-    stan_model = 'hierarchical-logistic.stan'
+    stan_model = 'hierarchical-logistic'
 
     ## Sampling parameters.
     samples = 2000
@@ -90,7 +90,7 @@ def main():
 
     ## Load Stan model.
     StanModel = load_model(stan_model)
-
+    print(StanModel)
     dd = getData()
 
     # Fit model.
@@ -112,17 +112,17 @@ def main():
     samples = StanFit.extract()
 
     plt.figure()
-    sns.distplot(samples['mu'][:,0])
+    sns.distplot(samples['alpha'][:,0])
 
-    ## posterior predictive check
-    beta_hat = np.median(samples['beta'], axis=0)
-    plt.figure()
-    ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])
-    ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])
-    ax.plot([-1,5],[-1,5])
-    ax.set(xlabel='True', ylabel='Predicted')
-
-    print(np.corrcoef(beta[0], beta_hat[:,0]))
+    # ## posterior predictive check TODO fix so that it corresponds to new parameter names
+    # beta_hat = np.median(samples['beta'], axis=0)
+    # plt.figure()
+    # ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])
+    # ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])
+    # ax.plot([-1,5],[-1,5])
+    # ax.set(xlabel='True', ylabel='Predicted')
+    #
+    # print(np.corrcoef(beta[0], beta_hat[:,0]))
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     ### Save data
