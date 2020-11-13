@@ -75,7 +75,7 @@ def main():
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
     ## I/O parameters.
-    stan_model = 'hierarchical-logistic'
+    stan_model = 'hierarchical-logistic.stan'
 
     ## Sampling parameters.
     samples = 2000
