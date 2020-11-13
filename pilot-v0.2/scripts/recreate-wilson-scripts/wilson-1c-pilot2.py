@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # load full data
-df = pd.read_csv('../data/data.csv')
+df = pd.read_csv('../../data/data.csv')
 
 subjects = df['Subject'].unique()
 n = len(subjects)  # number of subjects

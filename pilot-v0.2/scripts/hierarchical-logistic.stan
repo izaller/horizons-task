@@ -1,3 +1,5 @@
+// used by file 'stan-fitting-hierarchical.py'
+
 data {
 
     // Metadata

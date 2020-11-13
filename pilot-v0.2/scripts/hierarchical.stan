@@ -1,3 +1,5 @@
+// used by file 'regression-stan.py'
+
 data {
 
     // Metadata

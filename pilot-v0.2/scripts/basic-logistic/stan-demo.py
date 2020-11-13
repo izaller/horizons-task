@@ -28,7 +28,7 @@ plt.plot(x, theta, '-')
 plt.show()
 
 ## Compile model.
-StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/logistic-demo.stan')
+StanModel = load_model('/pilot-v0.2/scripts/basic-logistic/logistic-demo.stan')
 
 ## Prepare data for Stan.
 dd = dict(T=x.size, x=x, y=y)

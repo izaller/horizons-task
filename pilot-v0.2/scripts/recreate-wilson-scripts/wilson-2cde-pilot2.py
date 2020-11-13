@@ -12,7 +12,7 @@ np.set_printoptions(linewidth=desired_width)
 pd.set_option('display.max_columns', 12)
 
 # load full data
-df = pd.read_csv('../data/data.csv')
+df = pd.read_csv('../../data/data.csv')
 
 filt = df.loc[df['Trial'] == 5].filter(items=['Horizon', 'Info', 'Accuracy'])
 

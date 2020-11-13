@@ -5,8 +5,8 @@ from scipy.stats import zscore
 import csv
 
 
-df = pd.read_csv('../data/data.csv')
-reject = pd.read_csv('../data/reject.csv')
+df = pd.read_csv('../../data/data.csv')
+reject = pd.read_csv('../../data/reject.csv')
 
 
 # function for taking inverse log
@@ -211,7 +211,7 @@ def run_four(zscored=True):
     n = len(subjects)
     rejects = reject.query('Reject == 1')['Subject'].tolist()
 
-    with open('../figures,params/params_by_horizon_and_info.csv', 'w', newline='') as file:  ## horizon x more and less informative
+    with open('../../figures,params/params_by_horizon_and_info.csv', 'w', newline='') as file:  ## horizon x more and less informative
         writer = csv.writer(file)
         writer.writerow(['Subject', 'type', 'alpha', 'side', 'sigma'])
         bounds = ([-20,20],[-10,10],[1e-9,None])  # alpha, side, sigma

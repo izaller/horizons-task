@@ -1,3 +1,7 @@
+## -------------------------------------------------- ##
+# Uses file 'hierarchical.stan'
+## -------------------------------------------------- ##
+
 import numpy as np
 import matplotlib.pyplot as plt
 from stantools.io import load_model
@@ -12,8 +16,8 @@ alpha = 5
 side = 0
 sigma = 5
 
-df = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/data.csv')
-reject = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/reject.csv')
+df = pd.read_csv('/pilot-v0.2/data/data.csv')
+reject = pd.read_csv('/pilot-v0.2/data/reject.csv')
 
 
 # Info: 0 = [2,2] trial, 1 = [3,1] trial, -1 = [1,3] trial
@@ -100,7 +104,7 @@ def main():
     # writeData(params_h1, params_h6, 'params_stan.csv')
 
     # Compile model.
-    StanModel = load_model('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/scripts/hierarchical.stan')
+    StanModel = load_model('/pilot-v0.2/scripts/hierarchical.stan')
 
     params_h1 = model_h1(StanModel)
     params_h6 = model_h6(StanModel)
