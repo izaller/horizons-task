@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-from stantools.io import load_model, save_fit
+from stantools.io import load_model, save_fit, load_fit
 
 df = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/data.csv')
 reject = pd.read_csv('/Users/isabelzaller/Desktop/GitHub/horizons-task/pilot-v0.2/data/reject.csv')
@@ -34,7 +34,7 @@ beta = np.random.normal(mu, sigma, (N,K)).T
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ### Get data.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-def getData():
+def getData(gameLength):
     ## Define design matrix.
     X = np.column_stack([
         np.ones(T),
@@ -51,7 +51,7 @@ def getData():
     for s in subjects:
         if s in rejects:
             continue
-        data = df.query('Subject == @s and Horizon == 5 and Trial == 5')
+        data = df.query('Subject == @s and Horizon == @gameLength and Trial == 5')
         Y[i] = data['Choice']
         info[i] = data['Info']
         delta[i] = adjust_delta(data['delta'].reset_index(drop=True), info[i])
@@ -69,11 +69,12 @@ def adjust_delta(deltas, info):
     return deltas
 
 
+
 def main():
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     ### Define parameters.
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
+    gameLength = 5
     ## I/O parameters.
     stan_model = 'hierarchical-logistic'
 
@@ -91,11 +92,10 @@ def main():
     ## Load Stan model.
     StanModel = load_model(stan_model)
     print(StanModel)
-    dd = getData()
+    dd = getData(gameLength)
 
     # Fit model.
-    StanFit = StanModel.sampling(data=dd, iter=samples, warmup=warmup, chains=chains, thin=thin,
-                                 n_jobs=n_jobs, seed=47404)
+    StanFit = StanModel.sampling(data=dd, iter=samples, warmup=warmup, chains=chains, thin=thin, n_jobs=n_jobs, seed=47404)
     print(StanFit)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -104,20 +104,26 @@ def main():
 
     ## inspect chains
     chains = StanFit.extract(inc_warmup=True, permuted=False)
+    print("chains shape")
     print(chains.shape)
     plt.figure()
     plt.plot(chains[...,0])
+    figname = 'mcmc-chains-' + str(gameLength) + '-rounds'
+    plt.savefig(figname)
 
     ## inspect distributions
     samples = StanFit.extract()
-
+    print("samples")
+    print(samples)
     plt.figure()
     sns.distplot(samples['alpha'][:,0])
+    figname = 'info-param-distribution-' + str(gameLength) + '-rounds'
+    plt.savefig(figname)
 
     # ## posterior predictive check TODO fix so that it corresponds to new parameter names
-    # beta_hat = np.median(samples['beta'], axis=0)
-    # plt.figure()
-    # ax = sns.scatterplot(x=beta[0], y=beta_hat[:,0])
+    sigma_hat = np.median(samples['sigma'], axis=0)
+    plt.figure()
+    ax = sns.scatterplot(x=sigma[0], y=sigma_hat[:,0])
     # ax = sns.scatterplot(x=beta[1], y=beta_hat[:,1])
     # ax.plot([-1,5],[-1,5])
     # ax.set(xlabel='True', ylabel='Predicted')
@@ -127,9 +133,6 @@ def main():
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     ### Save data
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-    from stantools.io import load_fit
-
-    test = load_fit('hierarchical-logistic.pkl')
 
     save_fit(stan_model, StanFit, data=dd)
 
