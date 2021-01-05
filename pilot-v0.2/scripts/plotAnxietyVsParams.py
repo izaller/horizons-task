@@ -109,7 +109,7 @@ def scatter_params(test, filename, figname, fullrow=True):
     scores = -1
     if test.upper() == 'PSWQ':
         scores = get_pswq()
-    elif test.upper() == 'IUS12':
+    elif test.upper() == 'IUS-12':
         scores = get_ius12()
     elif test.upper() == 'NCS':
         scores = get_ncs(fullrow)
@@ -117,30 +117,46 @@ def scatter_params(test, filename, figname, fullrow=True):
     df = pd.read_csv(filename)
     alphas_h1, alphas_h6, sides_h1, sides_h6, sigmas_h1, sigmas_h6 = get_params(df)
 
-    fig, (alpha, side, sigma) = plt.subplots(nrows=1, ncols=3, figsize=(17,4))
+    fig1, (alpha1, alpha6) = plt.subplots(nrows=1, ncols=2, sharey='row', figsize=(12, 4))
+    alpha1.plot(scores, alphas_h1, 'o', color='blue', label='Horizon 1')
+    alpha6.plot(scores, alphas_h6, 'o', color='orange', label='Horizon 6')
+    rho_1, p1 = stats.spearmanr(scores, alphas_h1)
+    rho_6, p6 = stats.spearmanr(scores, alphas_h6)
+    print(rho_1, p1, rho_6, p6)
+    corr = 'spearman correlation, H1 = %f\nspearman correlation, H6 = %f\n' % (rho_1, rho_6)
+    alpha1.set(title='Horizon 1', xlabel='%s score' % test, ylabel='Information bonus')
+    alpha6.set(title='Horizon 6', xlabel='%s score' % test)
+    fig1.suptitle('%s score vs. information bonus' % test, fontsize=16)
+    fig1.text(.5, 0, corr, ha='center', fontsize=8)
+    fig1.tight_layout(pad=2.5)
+    fig1.savefig(figname + '-alpha.png')
+    print(corr)
 
-    alpha.plot(scores, alphas_h1, 'o', color='blue', label='Horizon 1')
-    alpha.plot(scores, alphas_h6, 'o', color='orange', label='Horizon 6')
-    rho_1 = stats.spearmanr(scores, alphas_h1)[0]
-    rho_6 = stats.spearmanr(scores, alphas_h6)[0]
-    print(figname, stats.spearmanr(scores, alphas_h1))
-    print(figname, stats.spearmanr(scores, alphas_h6))
-    corr = 'spearman correlation, H1 = %f\nspearman correlation, H6 = %f' % (rho_1, rho_6)
-    alpha.set(title='%s score vs. alpha' % test, xlabel='%s score\n%s' % (test, corr), ylabel='alpha')
-    alpha.legend()
-
-    side.plot(scores, sides_h1, 'o', color='blue', label='Horizon 1')
-    side.plot(scores, sides_h6, 'o', color='orange', label='Horizon 6')
-    side.set(title='%s score vs. side (spatial parameter)' % test, xlabel='%s score' % test, ylabel='side')
-    side.legend()
-
-    sigma.plot(scores, sigmas_h1, 'o', color='blue', label='Horizon 1')
-    sigma.plot(scores, sigmas_h6, 'o', color='orange', label='Horizon 6')
-    sigma.set(title='%s score vs. sigma (information noise)' % test, xlabel='%s score' % test, ylabel='sigma')
-    sigma.legend()
-
-    plt.tight_layout()
-    plt.savefig(figname)
+    # fig2, (side1, side6) = plt.subplots(nrows=1, ncols=2, sharey='row', figsize=(12, 4))
+    # side1.plot(scores, sides_h1, 'o', color='blue', label='Horizon 1')
+    # side6.plot(scores, sides_h6, 'o', color='orange', label='Horizon 6')
+    # rho_1 = stats.spearmanr(scores, sides_h1)[0]
+    # rho_6 = stats.spearmanr(scores, sides_h6)[0]
+    # corr = 'spearman correlation, H1 = %f\nspearman correlation, H6 = %f' % (rho_1, rho_6)
+    # side1.set(title='Horizon 1', xlabel='%s score' % test, ylabel='Side bias')
+    # side6.set(title='Horizon 6', xlabel='%s score' % test)
+    # fig2.text(.5, .05, corr, ha='center', fontsize=8)
+    # fig2.suptitle('%s score vs. side bias' % test, fontsize=16)
+    # fig2.tight_layout(pad=2.5)
+    # plt.savefig(figname + '-side.png')
+    #
+    # fig3, (sigma1, sigma6) = plt.subplots(nrows=1, ncols=2, sharey='row', figsize=(12, 4))
+    # sigma1.plot(scores, sigmas_h1, 'o', color='blue', label='Horizon 1')
+    # sigma6.plot(scores, sigmas_h6, 'o', color='orange', label='Horizon 6')
+    # rho_1 = stats.spearmanr(scores, sigmas_h1)[0]
+    # rho_6 = stats.spearmanr(scores, sigmas_h6)[0]
+    # corr = 'spearman correlation, H1 = %f\nspearman correlation, H6 = %f' % (rho_1, rho_6)
+    # sigma1.set(title='Horizon 1', xlabel='%s score' % test, ylabel='Decision noise')
+    # sigma6.set(title='Horizon 6', xlabel='%s score' % test)
+    # fig3.text(.5, .05, corr, ha='center', fontsize=8)
+    # fig3.suptitle('%s score vs. decision noise' % test, fontsize=16)
+    # fig3.tight_layout(pad=2.5)
+    # plt.savefig(figname + '-sigma.png')
 
 
 # filename is the path to df
@@ -181,22 +197,25 @@ def main():
     #                '../figures/params_stan.csv',
     #                '../figures/NCS_decisiveness_params_stan.png',
     #                fullrow=False)
-    # plot_bars('../figures/params_stan.csv', '../figures/bar_plot_params.png')
-    plot_bars('../param-csv-output/params_stan_hierachical.csv', '../figures/bar_plot_params_hierarchical.png')
-    scatter_params('PSWQ',
-                   '../param-csv-output/params_stan_hierachical.csv',
-                   '../figures/PSWQ_params_stan_hierachical.png')
-    plot_alpha_hist('../param-csv-output/params_stan.csv', 'alpha_hist_stan.png')
-    scatter_params('IUS12',
-                   '../param-csv-output/params_stan_hierachical.csv',
-                   '../figures/IUS12_params_stan_hierachical.png')
-    scatter_params('NCS',
-                   '../param-csv-output/params_stan_hierachical.csv',
-                   '../figures/NCS_params_stan_hierachical.png')
-    scatter_params('NCS',
-                   '../param-csv-output/params_stan_hierachical.csv',
-                   '../figures/NCS_decisiveness_params_stan_hierachical.png',
-                   fullrow=False)
+    # plot_bars('../param-csv-output/params_stan.csv', '../figures/bar_plot_params.png')
+
+    csvname = '../param-csv-output/params_stan.csv'
+    dir = './'
+    # plot_bars(csvname, dir + 'bar_plot_params_hierarchical.png')
+    # scatter_params('PSWQ',
+    #                csvname,
+    #                dir + 'PSWQ_params_stan_hierachical.png')
+    # plot_alpha_hist(csvname, dir + 'alpha_hist_stan.png')
+    scatter_params('IUS-12',
+                   csvname,
+                   dir + 'IUS-12_hierachical')
+    # scatter_params('NCS',
+    #                csvname,
+    #                dir + 'NCS_params_stan_hierachical.png')
+    # scatter_params('NCS',
+    #                csvname,
+    #                '../figures/NCS_decisiveness_params_stan_hierachical.png',
+    #                fullrow=False)
 
 
 if __name__ == '__main__':

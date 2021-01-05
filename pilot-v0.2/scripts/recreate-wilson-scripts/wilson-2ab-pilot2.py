@@ -33,16 +33,16 @@ h6_uneq = uneq.loc[uneq['Horizon'] == 10].filter(items=['adjusted_delta', 'made_
     .groupby('adjusted_delta').mean('made_info_choice')
 
 # plot the data
-fig, (unequal, equal) = plt.subplots(1, 2, figsize=(16, 4))
+fig, (unequal, equal) = plt.subplots(1, 2, figsize=(10, 4))
 
-unequal.set(title="unequal information [1,3] and [3,1]",
+unequal.set(title="unequal information [3, 1]",
             xlabel="difference in means between\nmore and less informative options",
             ylabel="probability of choosing\nmore informative option", ylim=(0, 1), yticks=np.arange(0, 1, 0.1))
 unequal.plot(h1_uneq, 'o-', label='Horizon 1')
 unequal.plot(h6_uneq, 'o-', label='Horizon 6')
 unequal.legend(loc='upper left')
 
-equal.set(title="equal information [2,2]", xlabel="difference in means between\nleft and right options",
+equal.set(title="equal information [2, 2]", xlabel="difference in means between\nleft and right options",
           ylabel="probability of choosing\nleft option", ylim=(0, 1), yticks=np.arange(0, 1, 0.1))
 equal.plot(h1_eq, 'o-', label='Horizon 1')
 equal.plot(h6_eq, 'o-', label='Horizon 6')
