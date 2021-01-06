@@ -20,9 +20,12 @@ eq = filt.loc[filt['Info'] == 0].filter(items=['delta', 'Horizon', 'Choice'])
 uneq = filt.loc[filt['Info'] != 0].copy()
 
 # add col to uneq to describe if subject made the more informative choice that round: 1 = made info choice, 0 = did not
-uneq['made_info_choice'] = np.where(((uneq.Choice == 1)&(uneq.Info == 1)) | ((uneq.Choice == 0)&(uneq.Info == -1)),1,0)
+# uneq['made_info_choice'] = np.where(((uneq.Choice == 1)&(uneq.Info == 1)) | ((uneq.Choice == 0)&(uneq.Info == -1)),1,0)  ## original
+uneq['made_info_choice'] = np.where(((uneq.Choice == 1)&(uneq.Info == -1)) | ((uneq.Choice == 0)&(uneq.Info == 1)),1,0) ## just sent to sam
+
 # adjust so that (delta = more informative - less informative) rather than (delta = left - right)
-uneq['adjusted_delta'] = np.where((uneq.Info == -1), -uneq.delta, uneq.delta)
+# uneq['adjusted_delta'] = np.where((uneq.Info == -1), -uneq.delta, uneq.delta)  ## original
+uneq['adjusted_delta'] = np.where((uneq.Info == -1), uneq.delta, -uneq.delta)    ## just sent to sam
 
 h1_eq = eq.loc[eq['Horizon'] == 5].filter(items=['delta', 'Choice']).groupby('delta').mean('Choice')
 h6_eq = eq.loc[eq['Horizon'] == 10].filter(items=['delta', 'Choice']).groupby('delta').mean('Choice')
